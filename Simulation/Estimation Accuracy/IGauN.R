@@ -224,28 +224,25 @@ Moment.Sigma <- apply(result$Moment.Sigma, c(1, 2), mean)
 Moment.Lambda <- mean(result$Moment.Lambda)
 Moment.Loglikelihood <- mean(result$Moment.Loglikelihood)
 
-MLE.Mu.Bias <- MLE.Mu - Mu
-MLE.Mu.MSE <- colSums((result$MLE.Mu - Mu)^2 / all_times)
-MLE.Sigma.MSE <- colSums((result$MLE.Mu - Mu)^2 / all_times)
-MLE.Sigma.Bias <- MLE.Sigma - Sigma
+MLE.Mu.MSE <- colSums((sweep(result$MLE.Mu, MARGIN = 2, STATS = Mu, FUN = "-"))^2 / all_times)
+MLE.Lambda.MSE <- sum((result$MLE.Lambda - Lambda)^2 / all_times)
+
 b <- array(dim = dim(result$MLE.Sigma))
 for (i in 1:all_times) {
   b[, , i] <- result$MLE.Sigma[, , i] - Sigma
 }
 MLE.Sigma.MSE <- apply(b^2, c(1, 2), mean)
-MLE.Lambda.Bias <- MLE.Lambda - Lambda
-MLE.Lambda.MSE <- sum((result$MLE.Lambda - Lambda)^2 / all_times)
 
-Moment.Mu.Bias <- Moment.Mu - Mu
-Moment.Mu.MSE <- colSums((result$Moment.Mu - Mu)^2 / all_times)
-Moment.Sigma.Bias <- Moment.Sigma - Sigma
+Moment.Mu.MSE <- colSums(((sweep(result$Moment.Mu, MARGIN = 2, STATS = Mu, FUN = "-"))^2)^2 / all_times)
+Moment.Lambda.MSE <- sum((result$Moment.Lambda - Lambda)^2 / all_times)
+
 b <- array(dim = dim(result$Moment.Sigma))
 for (i in 1:all_times) {
   b[, , i] <- result$Moment.Sigma[, , i] - Sigma
 }
 Moment.Sigma.MSE <- apply(b^2, c(1, 2), mean)
-Moment.Lambda.Bias <- Moment.Lambda - Lambda
-Moment.Lambda.MSE <- sum((result$Moment.Lambda - Lambda)^2 / all_times)
+
+
 
 MLE <- data.frame(Loglikelihood = MLE.Loglikelihood, 
                   Mu1 = MLE.Mu[1], 
@@ -278,6 +275,7 @@ Final <- list(MLE = MLE %>% round(digits = 4),
               Moment = Moment %>% round(digits = 4))
 
 Final
+
 # 结束运算，输出时间
 end_time <- Sys.time()
 print(end_time - start_time)
