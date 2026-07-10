@@ -1,4 +1,4 @@
-Mix.density <- function(x, Mu, Sigma, Kurtosis, Ratio) {
+Mix.density <- function(x, z, Beta, Sigma, Kurtosis, Ratio) {
   # 确定各分布的参数Lambda
   Lambda1 <- (3 / Kurtosis) + 2
   Lambda2 <- 3 / Kurtosis

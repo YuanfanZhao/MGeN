@@ -1,4 +1,4 @@
-IGaN.MLE <- function(X, Z, Beta_new, Sigma_new, Lambda_new, max_iter = 1000, ep = 1e-8) {
+IGaN.MLE <- function(X, Z, Beta_new, Sigma_new, Lambda_new, max_iter = 1000, ep = 1e-6) {
   index <- FALSE
   iter <- 1
   

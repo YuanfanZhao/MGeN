@@ -1,4 +1,4 @@
-NPMN.MLE <- function(X, Z, Beta_new, Sigma_new, M, max_iter = 1000, ep = 1e-8) {
+NPMN.MLE <- function(X, Z, Beta_new, Sigma_new, M, max_iter = 1000, ep = 1e-6) {
   index <- FALSE
   iter <- 1
   
@@ -46,7 +46,11 @@ NPMN.MLE <- function(X, Z, Beta_new, Sigma_new, M, max_iter = 1000, ep = 1e-8) {
     
     G <- compute.G(X, Z, Beta, Sigma, p)
     
-    a <- as.numeric(G %*% tau)
+    if (M == 1) {
+      a <- as.numeric(G * tau)
+    } else {
+      a <- as.numeric(G %*% tau)
+    }
     A <- diag(a)
     
     Beta_new <- solve(t(Z) %*% A %*% Z) %*% (t(Z) %*% A %*% X)
