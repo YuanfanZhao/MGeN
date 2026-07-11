@@ -2,14 +2,14 @@
 Choose.M <- function(X, Z, Beta, Sigma, Kurtosis, Ratio, K = 5, ep = 1e-6) {
   n <- nrow(X)
   M_grid <- seq(2, floor(sqrt(n)), by = 1)
-  cat("M:", M_grid, "\n")
+  # cat("M:", M_grid, "\n")
   
   compute_loglik_over_M <- function(M_grid) {
     loglik_vec <- numeric(length(M_grid))
     
-    total_steps <- length(loglik_vec)
-    pb <- txtProgressBar(min = 0, max = total_steps, style = 3)
-    step_count <- 0 # 初始化步数计数器
+    # total_steps <- length(loglik_vec)
+    # pb <- txtProgressBar(min = 0, max = total_steps, style = 3)
+    # step_count <- 0 # 初始化步数计数器
     
     for (k in 1:length(M_grid)) {
       M <- M_grid[k]
@@ -17,11 +17,11 @@ Choose.M <- function(X, Z, Beta, Sigma, Kurtosis, Ratio, K = 5, ep = 1e-6) {
       loglik_vec[k] <- fit$Loglikelihood
       
       # cat("M:", M, " Loglikelihood:", loglik_vec[k], "\n")
-      step_count <- step_count + 1
-      setTxtProgressBar(pb, step_count)
+      # step_count <- step_count + 1
+      # setTxtProgressBar(pb, step_count)
     }
     
-    close(pb)
+    # close(pb)
     
     data.frame(
       M = M_grid,
@@ -57,9 +57,9 @@ Choose.M <- function(X, Z, Beta, Sigma, Kurtosis, Ratio, K = 5, ep = 1e-6) {
     
     cv_MSE <- matrix(0, nrow = length(M_grid), ncol = K)
     
-    total_steps <- K * length(M_grid)
-    pb <- txtProgressBar(min = 0, max = total_steps, style = 3)
-    step_count <- 0 # 初始化步数计数器
+    # total_steps <- K * length(M_grid)
+    # pb <- txtProgressBar(min = 0, max = total_steps, style = 3)
+    # step_count <- 0 # 初始化步数计数器
     
     for (k in 1:K) {
       X_train <- X[fold_id != k, , drop = FALSE]
@@ -83,12 +83,12 @@ Choose.M <- function(X, Z, Beta, Sigma, Kurtosis, Ratio, K = 5, ep = 1e-6) {
         result <- apply(cbind(X_test, Z_test), 1, m)
         cv_MSE[j, k] <- mean(result)
         
-        step_count <- step_count + 1
-        setTxtProgressBar(pb, step_count)
+        # step_count <- step_count + 1
+        # setTxtProgressBar(pb, step_count)
       }
     }
     
-    close(pb)
+    # close(pb)
     
     mean_MSE <- rowMeans(cv_MSE)
     
@@ -104,17 +104,17 @@ Choose.M <- function(X, Z, Beta, Sigma, Kurtosis, Ratio, K = 5, ep = 1e-6) {
   
   # Step1: All likelihood
   ll_df <- compute_loglik_over_M(M_grid)
-  print(ll_df)
+  # print(ll_df)
   
   # Step 2: stability screening
   M_stable <- select_M_by_stability(ll_df, ep)
-  print(M_stable)
+  # print(M_stable)
   
   M_candidates <- M_grid[M_grid >= M_stable]
-  print(M_candidates)
+  # print(M_candidates)
   
   cv_df <- select_M_by_CV(M_candidates)
-  print(cv_df %>% round(digits = 4))
+  # print(cv_df %>% round(digits = 4))
   
   # Step 4: final choice
   M_final <- choose_best_M_CV(cv_df)

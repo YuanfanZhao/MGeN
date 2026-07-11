@@ -58,7 +58,7 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
   KL <- matrix(nrow = number, ncol = 5)
   ISE <- matrix(nrow = number, ncol = 5)
   MSE <- matrix(nrow = number, ncol = 5)
-  Rank <- matrix(nrow = number, ncol = 5)
+  Rank <- array(dim = c(3, 5, number))
   
   iter <- 1
   while(iter <= number) {
@@ -86,44 +86,90 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
     l3 <- (3 + sqrt(12 * kur + 9)) / (2 * kur)
     l4 <- 3 / kur
     
-    GaN.fit <- GaN.MLE(X.train, Z.train, Beta, s, l1)
-    IGaN.fit <- IGaN.MLE(X.train, Z.train, Beta, s, l2)
-    IGauN.fit <- IGauN.MLE(X.train, Z.train, Beta, s, l3)
-    RIGauN.fit <- RIGauN.MLE(X.train, Z.train, Beta, s, l4)
+    GaN.fit <- tryCatch({
+      GaN.MLE(X.train, Z.train, Beta, s, l1)
+    }, error = function(e) {
+      NA
+    }, warning = function(w) {
+      NA
+    })
+      
+      
+    IGaN.fit <- tryCatch({
+      IGaN.MLE(X.train, Z.train, Beta, s, l2)
+    }, error = function(e) {
+      NA
+    }, warning = function(w) {
+      NA
+    })
     
-    M.opt <- Choose.M(X.train, Z.train, Beta, Sigma, Kurtosis, Ratio)
-    NPMN.fit <- NPMN.MLE(X.train, Z.train, Beta, s, M.opt)
     
-    # 在测试集上测试拟合效果
-    true_parameters <- list(
-      Beta = Beta,
-      Sigma = Sigma, 
-      Kurtosis = Kurtosis, 
-      Ratio = Ratio
-    )
+    IGauN.fit <- tryCatch({
+      IGauN.MLE(X.train, Z.train, Beta, s, l3)
+    }, error = function(e) {
+      NA
+    }, warning = function(w) {
+      NA
+    })
     
-    # 把你的6个模型拟合得到的参数打包
-    estimated_parameters <- list(
-      GaN = list(Beta = GaN.fit$Beta, Sigma = GaN.fit$Sigma, Lambda = GaN.fit$Lambda),
-      IGaN = list(Beta = IGaN.fit$Beta, Sigma = IGaN.fit$Sigma, Lambda = IGaN.fit$Lambda),
-      IGauN = list(Beta = IGauN.fit$Beta, Sigma = IGauN.fit$Sigma, Lambda = IGauN.fit$Lambda),
-      RIGauN = list(Beta = RIGauN.fit$Beta, Sigma = RIGauN.fit$Sigma, Lambda = RIGauN.fit$Lambda), 
-      NPMN = list(Beta = NPMN.fit$Beta, Sigma = NPMN.fit$Sigma, p = NPMN.fit$p)
-    )
-    # KL散度和ISE
-    evaluation1 <- KLandISE(X.test, Z.test, true_parameters, estimated_parameters)
     
-    # MSE
-    evaluation2 <- MSE(Z.test, true_parameters$Beta, estimated_parameters, X.test)
+    RIGauN.fit <- tryCatch({
+      RIGauN.MLE(X.train, Z.train, Beta, s, l4)
+    }, error = function(e) {
+      NA
+    }, warning = function(w) {
+      NA
+    })
     
-    # Rank
-    Ran <- colMeans(matrix(c(rank(-as.numeric(evaluation1$KLD)), rank(-as.numeric(evaluation1$ISE)), rank(-as.numeric(evaluation2$MSE_pred))), byrow = TRUE, nrow = 3))
+    M.opt <- tryCatch({
+      Choose.M(X.train, Z.train, Beta, Sigma, Kurtosis, Ratio)
+    }, error = function(e) {
+      NA
+    }, warning = function(w) {
+      NA
+    })
     
-    KL[iter, ] <- evaluation1$KLD
-    ISE[iter, ] <- evaluation1$ISE
-    MSE[iter, ] <- evaluation2$MSE_pred
-    Rank[iter, ] <- Ran
-    iter <- iter + 1
+    NPMN.fit <- tryCatch({
+      NPMN.MLE(X.train, Z.train, Beta, s, M.opt)
+    }, error = function(e) {
+      NA
+    }, warning = function(w) {
+      NA
+    })
+    
+    if (!all(is.na(GaN.fit)) & !all(is.na(IGaN.fit)) & !all(is.na(IGauN.fit)) & !all(is.na(RIGauN.fit)) & !all(is.na(NPMN.fit))) {
+      if (GaN.fit$index == TRUE & IGaN.fit$index == TRUE & IGauN.fit$index == TRUE & RIGauN.fit$index == TRUE & NPMN.fit$index == TRUE) {
+        # 在测试集上测试拟合效果
+        true_parameters <- list(
+          Beta = Beta,
+          Sigma = Sigma, 
+          Kurtosis = Kurtosis, 
+          Ratio = Ratio
+        )
+        
+        # 把你的6个模型拟合得到的参数打包
+        estimated_parameters <- list(
+          GaN = list(Beta = GaN.fit$Beta, Sigma = GaN.fit$Sigma, Lambda = GaN.fit$Lambda),
+          IGaN = list(Beta = IGaN.fit$Beta, Sigma = IGaN.fit$Sigma, Lambda = IGaN.fit$Lambda),
+          IGauN = list(Beta = IGauN.fit$Beta, Sigma = IGauN.fit$Sigma, Lambda = IGauN.fit$Lambda),
+          RIGauN = list(Beta = RIGauN.fit$Beta, Sigma = RIGauN.fit$Sigma, Lambda = RIGauN.fit$Lambda), 
+          NPMN = list(Beta = NPMN.fit$Beta, Sigma = NPMN.fit$Sigma, p = NPMN.fit$p)
+        )
+        # KL散度和ISE
+        evaluation1 <- KLandISE(X.test, Z.test, true_parameters, estimated_parameters)
+        
+        # MSE
+        evaluation2 <- MSE(Z.test, true_parameters$Beta, estimated_parameters, X.test)
+        
+        # Rank
+        Ran <- matrix(c(rank(-as.numeric(evaluation1$KLD)), rank(-as.numeric(evaluation1$ISE)), rank(-as.numeric(evaluation2$MSE_pred))), byrow = TRUE, nrow = 3)
+        
+        KL[iter, ] <- evaluation1$KLD
+        ISE[iter, ] <- evaluation1$ISE
+        MSE[iter, ] <- evaluation2$MSE_pred
+        Rank[, , iter] <- Ran
+      }
+    }
   }
   
   return(list(KL = KL, ISE = ISE, MSE = MSE, Rank = Rank))
@@ -140,14 +186,14 @@ Beta <- matrix(c(-1, 2), ncol = 2)
 Sigma <- matrix(c(1, 0.5, 0.5, 2), nrow = 2)
 Kurtosis <- 2
 # Ratio <- c(0.25, 0.25, 0.25, 0.25)
-Ratio <- c(1, 0, 0, 0)
+Ratio <- c(0, 1, 0, 0)
 
 # ==============================================================================================================================
 
 # 进行并行运算
 cl <- makeCluster(num_cores)
 registerDoParallel(cl)
-result_part <- foreach(x = 1:num_cores) %dopar% Simulation(number = ceiling(all_times / num_cores), size, alpha, Beta, Var.tau, Ratio)
+result_part <- foreach(x = 1:num_cores) %dopar% Simulation(number = ceiling(all_times / num_cores), size, Beta, Sigma, Kurtosis, Ratio)
 stopCluster(cl)
 
 # ==============================================================================================================================
@@ -157,4 +203,4 @@ end_time <- Sys.time()
 print(end_time - start_time)
 
 
-Simulation(1, size, alpha, Beta, Var.tau, Ratio)
+# Simulation(1, size, Beta, Sigma, Kurtosis, Ratio)
