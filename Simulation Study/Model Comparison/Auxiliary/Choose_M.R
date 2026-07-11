@@ -2,14 +2,14 @@
 Choose.M <- function(X, Z, Beta, Sigma, Kurtosis, Ratio, K = 5, ep = 1e-6) {
   n <- nrow(X)
   M_grid <- seq(2, floor(sqrt(n)), by = 1)
-  # cat("M:", M_grid, "\n")
+  cat("M:", M_grid, "\n")
   
   compute_loglik_over_M <- function(M_grid) {
     loglik_vec <- numeric(length(M_grid))
     
-    # total_steps <- length(loglik_vec)
-    # pb <- txtProgressBar(min = 0, max = total_steps, style = 3)
-    # step_count <- 0 # 初始化步数计数器
+    total_steps <- length(loglik_vec)
+    pb <- txtProgressBar(min = 0, max = total_steps, style = 3)
+    step_count <- 0 # 初始化步数计数器
     
     for (k in 1:length(M_grid)) {
       M <- M_grid[k]
@@ -17,11 +17,11 @@ Choose.M <- function(X, Z, Beta, Sigma, Kurtosis, Ratio, K = 5, ep = 1e-6) {
       loglik_vec[k] <- fit$Loglikelihood
       
       # cat("M:", M, " Loglikelihood:", loglik_vec[k], "\n")
-      # step_count <- step_count + 1
-      # setTxtProgressBar(pb, step_count)
+      step_count <- step_count + 1
+      setTxtProgressBar(pb, step_count)
     }
     
-    # close(pb)
+    close(pb)
     
     data.frame(
       M = M_grid,
@@ -55,11 +55,11 @@ Choose.M <- function(X, Z, Beta, Sigma, Kurtosis, Ratio, K = 5, ep = 1e-6) {
     d <- ncol(X)
     fold_id <- sample(rep(1:K, length.out = n))
     
-    cv_MSE <- matrix(0, nrow = length(M_grid), ncol = K)
+    cv_criterion <- array(0, c(length(M_grid), K, 3))
     
-    # total_steps <- K * length(M_grid)
-    # pb <- txtProgressBar(min = 0, max = total_steps, style = 3)
-    # step_count <- 0 # 初始化步数计数器
+    total_steps <- K * length(M_grid)
+    pb <- txtProgressBar(min = 0, max = total_steps, style = 3)
+    step_count <- 0 # 初始化步数计数器
     
     for (k in 1:K) {
       X_train <- X[fold_id != k, , drop = FALSE]
@@ -72,34 +72,42 @@ Choose.M <- function(X, Z, Beta, Sigma, Kurtosis, Ratio, K = 5, ep = 1e-6) {
         M <- M_grid[j]
         fit <- NPMN.MLE(X_train, Z_train, Beta, Sigma, M)
         
-        result <- numeric(length = nrow(X_test))
-        
         m <- function(data) {
           x <- data[1:d]
           z <- data[-(1:d)]
-          (Mix.density(x, z, Beta, Sigma, Kurtosis, Ratio) - NPMN.density(x, z, fit$Beta, fit$Sigma, fit$p))^2
+          MSE.value <- (Mix.density(x, z, Beta, Sigma, Kurtosis, Ratio) - NPMN.density(x, z, fit$Beta, fit$Sigma, fit$p))^2
+          MAE.value <- abs(Mix.density(x, z, Beta, Sigma, Kurtosis, Ratio) - NPMN.density(x, z, fit$Beta, fit$Sigma, fit$p))
+          Density.value <- NPMN.density(x, z, fit$Beta, fit$Sigma, fit$p)
+          return(c(MSE.value, MAE.value, Density.value))
         }
         
         result <- apply(cbind(X_test, Z_test), 1, m)
-        cv_MSE[j, k] <- mean(result)
+        cv_criterion[j, k, 1] <- mean(result[1, ])
+        cv_criterion[j, k, 2] <- mean(result[2, ])
+        cv_criterion[j, k, 3] <- -(result[3, ] |> log() |> sum())
         
-        # step_count <- step_count + 1
-        # setTxtProgressBar(pb, step_count)
+        step_count <- step_count + 1
+        setTxtProgressBar(pb, step_count)
       }
     }
     
-    # close(pb)
+    close(pb)
     
-    mean_MSE <- rowMeans(cv_MSE)
+    mean_criterion <- apply(cv_criterion, c(1, 3), mean)
     
-    data.frame(
+    list(
       M = M_grid,
-      cv_MSE = mean_MSE
+      cv_criterion = mean_criterion
     )
   }
   
   choose_best_M_CV <- function(cv_df) {
-    cv_df$M[which.min(cv_df$cv_MSE)]
+    M.MSE <- cv_df$M[which.min(cv_df$cv_criterion[, 1])]
+    M.MAE <- cv_df$M[which.min(cv_df$cv_criterion[, 2])]
+    M.Log <- cv_df$M[which.min(cv_df$cv_criterion[, 3])]
+    data.frame(MSE = M.MSE, 
+               MAE = M.MAE, 
+               Log = M.Log)
   }
   
   # Step1: All likelihood
@@ -111,7 +119,7 @@ Choose.M <- function(X, Z, Beta, Sigma, Kurtosis, Ratio, K = 5, ep = 1e-6) {
   # print(M_stable)
   
   M_candidates <- M_grid[M_grid >= M_stable]
-  # print(M_candidates)
+  print(M_candidates)
   
   cv_df <- select_M_by_CV(M_candidates)
   # print(cv_df %>% round(digits = 4))

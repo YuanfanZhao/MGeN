@@ -55,10 +55,11 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
   source("Auxiliary/Choose_M.R")
   
   # 评价指标
-  KL <- matrix(nrow = number, ncol = 5)
-  ISE <- matrix(nrow = number, ncol = 5)
-  MSE <- matrix(nrow = number, ncol = 5)
-  Rank <- array(dim = c(3, 5, number))
+  KL.value <- matrix(nrow = number, ncol = 5)
+  ISE.value <- matrix(nrow = number, ncol = 5)
+  MSE.value <- matrix(nrow = number, ncol = 5)
+  M.value <- matrix(nrow = number, ncol = 3)
+  Rank.value <- array(dim = c(3, 5, number))
   
   iter <- 1
   while(iter <= number) {
@@ -93,8 +94,8 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
     }, warning = function(w) {
       NA
     })
-      
-      
+    
+    
     IGaN.fit <- tryCatch({
       IGaN.MLE(X.train, Z.train, Beta, s, l2)
     }, error = function(e) {
@@ -130,7 +131,7 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
     })
     
     NPMN.fit <- tryCatch({
-      NPMN.MLE(X.train, Z.train, Beta, s, M.opt)
+      NPMN.MLE(X.train, Z.train, Beta, s, min(M.opt))
     }, error = function(e) {
       NA
     }, warning = function(w) {
@@ -164,15 +165,17 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
         # Rank
         Ran <- matrix(c(rank(-as.numeric(evaluation1$KLD)), rank(-as.numeric(evaluation1$ISE)), rank(-as.numeric(evaluation2$MSE_pred))), byrow = TRUE, nrow = 3)
         
-        KL[iter, ] <- evaluation1$KLD
-        ISE[iter, ] <- evaluation1$ISE
-        MSE[iter, ] <- evaluation2$MSE_pred
-        Rank[, , iter] <- Ran
+        KL.value[iter, ] <- evaluation1$KLD
+        ISE.value[iter, ] <- evaluation1$ISE
+        MSE.value[iter, ] <- evaluation2$MSE_pred
+        M.value[iter, ] <- as.numeric(M.opt)
+        Rank.value[, , iter] <- Ran
+        iter <- iter + 1
       }
     }
   }
   
-  return(list(KL = KL, ISE = ISE, MSE = MSE, Rank = Rank))
+  return(list(KL = KL.value, ISE = ISE.value, MSE = MSE.value, M = M.value, Rank = Rank.value))
 }
 
 # ==============================================================================================================================
@@ -186,7 +189,7 @@ Beta <- matrix(c(-1, 2), ncol = 2)
 Sigma <- matrix(c(1, 0.5, 0.5, 2), nrow = 2)
 Kurtosis <- 2
 # Ratio <- c(0.25, 0.25, 0.25, 0.25)
-Ratio <- c(0, 1, 0, 0)
+Ratio <- c(0, 0, 0, 1)
 
 # ==============================================================================================================================
 
@@ -197,6 +200,27 @@ result_part <- foreach(x = 1:num_cores) %dopar% Simulation(number = ceiling(all_
 stopCluster(cl)
 
 # ==============================================================================================================================
+
+KL.value <- result_part[[1]]$KL
+ISE.value <- result_part[[1]]$ISE
+MSE.value <- result_part[[1]]$MSE
+M.value <- result_part[[1]]$M
+Rank.value <- result_part[[1]]$Rank
+
+for (i in 2:num_cores) {
+  KL.value <- rbind(KL.value, result_part[[i]]$KL)
+  ISE.value <- rbind(ISE.value, result_part[[i]]$ISE)
+  MSE.value <- rbind(MSE.value, result_part[[i]]$MSE)
+  M.value <- rbind(M.value, result_part[[i]]$M)
+  Rank.value <- abind(Rank.value, result_part[[i]]$Rank, along = 3)
+}
+
+colMeans(KL.value) %>% round(digits = 4)
+colMeans(ISE.value) %>% round(digits = 4)
+colMeans(MSE.value) %>% round(digits = 4)
+colMeans(M.value) %>% round(digits = 4)
+apply(Rank.value, c(1, 2), mean) %>% round(digits = 4)
+apply(Rank.value, c(1, 2), mean) %>% colMeans() %>% round(digits = 4)
 
 # 结束运算，输出时间
 end_time <- Sys.time()
