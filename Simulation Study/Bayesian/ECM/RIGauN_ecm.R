@@ -1,4 +1,4 @@
-GaN.ECM <- function(X, Mu_new, Sigma_new, Lambda, Mu0, Kappa0, Lambda0, Nu0, max_iter = 1000, ep = 1e-8) {
+RIGauN.ECM <- function(X, Mu_new, Sigma_new, Lambda, Mu0, Kappa0, Lambda0, Nu0, max_iter = 1000, ep = 1e-8) {
   
   index <- FALSE
   iter <- 1
@@ -6,24 +6,25 @@ GaN.ECM <- function(X, Mu_new, Sigma_new, Lambda, Mu0, Kappa0, Lambda0, Nu0, max
   n <- nrow(X)
   d <- ncol(X)
   
-  Gamma.moment <- function(X, Mu, Sigma) {
+  GIGau.moment <- function(X, Mu, Sigma) {
     
-    # Gamma分布的参数α，β
-    compute.beta <- function(x) {
-      return(as.numeric(t(x - Mu) %*% solve(Sigma) %*% (x - Mu)) / 2 + Lambda - 1)
+    # GIGau分布的参数a，b，p
+    compute.a <- function(x) {
+      return(as.numeric(t(x - Mu) %*% solve(Sigma) %*% (x - Mu)) + Lambda)
     }
-    alpha <- d / 2 + Lambda
-    beta <- apply(X, 1, compute.beta)
+    a <- apply(X, 1, compute.a)
+    b <- Lambda
+    p <- (d + 1) / 2
     
-    return(alpha / beta)
+    return(BesselK(sqrt(a * b), p + 1) / BesselK(sqrt(a * b), p) * (b / a)^0.5)
   }
   
   while (iter <= max_iter) {
     Mu <- Mu_new
     Sigma <- Sigma_new
-    Loglikeli <- GaN.loglikeli(X, Mu, Sigma, Lambda)
+    Loglikeli <- RIGauN.loglikeli(X, Mu, Sigma, Lambda)
     
-    a <- Gamma.moment(X, Mu, Sigma)
+    a <- GIGau.moment(X, Mu, Sigma)
     A <- diag(a)
     
     if (is.null(Mu0)) {
@@ -42,7 +43,7 @@ GaN.ECM <- function(X, Mu_new, Sigma_new, Lambda, Mu0, Kappa0, Lambda0, Nu0, max
       # cat("Sigma:", Sigma_new, "\n")
     }
     
-    Loglikeli_new <- GaN.loglikeli(X, Mu_new, Sigma_new, Lambda)
+    Loglikeli_new <- RIGauN.loglikeli(X, Mu_new, Sigma_new, Lambda)
     # cat("Loglikelihood:", Loglikeli_new, "\n")
     
     if (abs((Loglikeli_new - Loglikeli) / Loglikeli) < ep) {

@@ -10,16 +10,17 @@ Simulation <- function(number, size, Mu, Sigma, Lambda, Prior = "Non-information
   suppressWarnings(suppressMessages(library(Bessel)))
   suppressWarnings(suppressMessages(library(MCMCpack)))
   suppressWarnings(suppressMessages(library(abind)))
+  suppressWarnings(suppressMessages(library(GIGrvg)))
   
   # 导入生成随机数函数、密度函数、似然函数以及MLE函数
-  source("GS/rGaN.R")
-  source("Density/GaN_den.R")
-  source("Loglikelihood/GaN_log.R")
-  source("MLE/GaN_mle.R")
+  source("GS/rIGaN.R")
+  source("Density/IGaN_den.R")
+  source("Loglikelihood/IGaN_log.R")
+  source("MLE/IGaN_mle.R")
   
   # 导入ECM算法、DA算法
-  source("ECM/GaN_ecm.R")
-  source("DA/GaN_da.R")
+  source("ECM/IGaN_ecm.R")
+  source("DA/IGaN_da.R")
   
   # 开始Simulation
   k <- 1
@@ -34,13 +35,13 @@ Simulation <- function(number, size, Mu, Sigma, Lambda, Prior = "Non-information
                  Sigma.BCI = array(dim = c(nrow(Sigma), ncol(Sigma), 2, number)))
   
   while (k <= number) {
-    X <- rGaN(size, Mu, Sigma, Lambda)
+    X <- rIGaN(size, Mu, Sigma, Lambda)
     
     # 矩估计确定初值
     m <- colMeans(X)
     s <- var(X)
     kur <- apply(X, 2, kurtosis, type = 1) %>% mean()
-    l <- (3 / kur) + 2
+    l <- 3 / kur
     
     # 设置先验信息
     if (Prior == "Non-information") {
@@ -54,7 +55,7 @@ Simulation <- function(number, size, Mu, Sigma, Lambda, Prior = "Non-information
     
     
     Res <- tryCatch({
-      GaN.MLE(X, m, s, l)
+      IGaN.MLE(X, m, s, l)
     }, error = function(e) {
       NA
     }, warning = function(w) {
@@ -64,7 +65,7 @@ Simulation <- function(number, size, Mu, Sigma, Lambda, Prior = "Non-information
     if (!all(is.na(Res))) {
       if (Res$index == TRUE) {
         Mode.fit <- tryCatch({
-          GaN.ECM(X, m, s, Res$Lambda, Mu0, Kappa0, Lambda0, Nu0)
+          IGaN.ECM(X, m, s, Res$Lambda, Mu0, Kappa0, Lambda0, Nu0)
         }, error = function(e) {
           NA
         }, warning = function(w) {
@@ -73,7 +74,7 @@ Simulation <- function(number, size, Mu, Sigma, Lambda, Prior = "Non-information
         
         if (!all(is.na(Mode.fit))) {
           if (Mode.fit$index == TRUE) {
-            Mean.fit <- GaN.DA(X, m, s, Res$Lambda, Mu0, Kappa0, Lambda0, Nu0, B, G)
+            Mean.fit <- IGaN.DA(X, m, s, Res$Lambda, Mu0, Kappa0, Lambda0, Nu0, B, G)
             
             # 计算Beyesian可信区间
             indexx <- floor(c(0.025 * (G - B), 0.975 * (G - B)))
@@ -109,7 +110,7 @@ all_times <- num_cores * 1
 size <- 500
 Mu <- c(-1, 2)
 Sigma <- matrix(c(1, -0.5, -0.5, 2), nrow = 2)
-Lambda <- 2.5
+Lambda <- 1.5
 
 # 测试
 # Simulation(1, size, Mu, Sigma, Lambda, "Conjugate", B = 200, G = 1000)

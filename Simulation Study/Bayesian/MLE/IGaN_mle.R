@@ -59,24 +59,24 @@ IGaN.MLE <- function(X, Mu_new, Sigma_new, Lambda_new, max_iter = 1000, ep = 1e-
     A <- diag(a)
     
     Mu_new <- colSums(a * X / sum(a))
-    cat("Mu:", Mu_new, "\n")
+    # cat("Mu:", Mu_new, "\n")
     
     Q <- sweep(X, MARGIN = 2, STATS = Mu_new, FUN = "-")
     Sigma_new <- t(Q) %*% A %*% Q / n
-    cat("Sigma:", Sigma_new, "\n")
+    # cat("Sigma:", Sigma_new, "\n")
     
     Lambda_new <- US(Lambda, 1 - Bb - Bd)
-    cat("Lambda:", Lambda_new, "\n")
+    # cat("Lambda:", Lambda_new, "\n")
     
     Loglikeli_new <- IGaN.loglikeli(X, Mu_new, Sigma_new, Lambda_new)
-    cat("Loglikelihood:", Loglikeli_new, "\n")
+    # cat("Loglikelihood:", Loglikeli_new, "\n")
     
     if (abs((Loglikeli_new - Loglikeli) / Loglikeli) < ep) {
       index <- TRUE
       break
     }
     
-    cat("Iteration number:", iter, "\n")
+    # cat("Iteration number:", iter, "\n")
     iter <- iter + 1
   }
   

@@ -1,4 +1,4 @@
-GaN.DA <- function(X, Mu, Sigma, Lambda, Mu0, Kappa0, Lambda0, Nu0, B, G) {
+IGauN.DA <- function(X, Mu, Sigma, Lambda, Mu0, Kappa0, Lambda0, Nu0, B, G) {
   
   iter <- 1
   
@@ -15,8 +15,8 @@ GaN.DA <- function(X, Mu, Sigma, Lambda, Mu0, Kappa0, Lambda0, Nu0, B, G) {
   
   while (iter <= G) {
     # I-step: 生成潜在变量
-    Beta <- apply(X, 1, function(x) as.numeric(t(x - Mu.value[iter, ]) %*% solve(Sigma.value[, , iter]) %*% (x - Mu.value[iter, ])) / 2 + Lambda - 1)
-    tau <- sapply(Beta, function(beta) rgamma(1, Lambda + d / 2, beta))
+    A <- apply(X, 1, function(x) as.numeric(t(x - Mu.value[iter, ]) %*% solve(Sigma.value[, , iter]) %*% (x - Mu.value[iter, ])) + (Lambda - 1)^2 / Lambda)
+    tau <- sapply(A, function(a) rgig(1, (d - 1) / 2, Lambda, a))
     
     # P-step: 更新参数
     if (is.null(Mu0)) {
