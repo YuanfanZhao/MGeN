@@ -94,11 +94,11 @@ Simulation <- function(number, size, Mu, Sigma, Lambda, Prior = "Non-information
             result[[6]][, , ] <- apply(Mean.fit$Sigma, c(1, 2), mean)
             result[[7]][, , k] <- apply(Mean.fit$Sigma, c(1, 2), var) |> sqrt()
             result[[8]][, , , k] <- abind(Sigma.L, Sigma.U, along = 3)
+            k <- k + 1
           }
         }
       }
     }
-    k <- k + 1
   }
   
   return(result)
@@ -106,10 +106,10 @@ Simulation <- function(number, size, Mu, Sigma, Lambda, Prior = "Non-information
 
 # 参数设置
 num_cores <- detectCores()
-all_times <- num_cores * 1
+all_times <- num_cores * 11
 size <- 500
-Mu <- c(-1, 2)
-Sigma <- matrix(c(1, -0.5, -0.5, 2), nrow = 2)
+Mu <- c(0, -1)
+Sigma <- matrix(c(1, 0.5, 0.5, 1), nrow = 2)
 Lambda <- 1.5
 
 # 测试
@@ -121,7 +121,7 @@ start_time <- Sys.time()
 # 进行并行运算
 cl <- makeCluster(num_cores)
 registerDoParallel(cl)
-result_part <- foreach(x = 1:num_cores) %dopar% Simulation(number = ceiling(all_times / num_cores), size, Mu, Sigma, Lambda)
+result_part <- foreach(x = 1:num_cores) %dopar% Simulation(number = ceiling(all_times / num_cores), size, Mu, Sigma, Lambda, "Conjugate")
 stopCluster(cl)
 
 # 汇总并行运算结果
@@ -149,16 +149,30 @@ for (i in 2:num_cores) {
 
 # 后验众数
 Mu.Mode %>% colMeans() %>% round(digits = 4)
+colSums((sweep(Mu.Mode, MARGIN = 2, STATS = Mu, FUN = "-"))^2 / all_times) %>% round(digits = 4)
 apply(Sigma.Mode, c(1, 2), mean) %>% round(digits = 4)
+
+b <- array(dim = dim(Sigma.Mode))
+for (i in 1:all_times) {
+  b[, , i] <- Sigma.Mode[, , i] - Sigma
+}
+apply(b^2, c(1, 2), mean) %>% round(digits = 4)
 
 # μ的后验均值、标准差、置信区间和覆盖率
 Mu.Mean %>% colMeans() %>% round(digits = 4)
+colSums((sweep(Mu.Mean, MARGIN = 2, STATS = Mu, FUN = "-"))^2 / all_times) %>% round(digits = 4)
 Mu.std %>% colMeans() %>% round(digits = 4)
 apply(Mu.BCI, c(1, 2), mean) %>% round(digits = 4)
 rowMeans(Mu.BCI[, 1, ] <= Mu & Mu.BCI[, 2, ] >= Mu) %>% round(digits = 4)
 
 # Σ的后验均值、标准差、置信区间和覆盖率
 apply(Sigma.Mean, c(1, 2), mean) %>% round(digits = 4)
+b <- array(dim = dim(Sigma.Mean))
+for (i in 1:all_times) {
+  b[, , i] <- Sigma.Mean[, , i] - Sigma
+}
+apply(b^2, c(1, 2), mean) %>% round(digits = 4)
+
 apply(Sigma.std, c(1, 2), mean) %>% round(digits = 4)
 apply(Sigma.BCI, c(1, 2, 3), mean) %>% round(digits = 4)
 
@@ -166,7 +180,7 @@ index_BCI <- array(dim = c(nrow(Sigma), ncol(Sigma), all_times))
 for (i in 1:all_times) {
   index_BCI[, , i] <- Sigma.BCI[, , 1, i] <= Sigma & Sigma.BCI[, , 2, i] >= Sigma
 }
-apply(index_BCI, c(1, 2), mean)
+apply(index_BCI, c(1, 2), mean) %>% round(digits = 4)
 
 # 结束运算，输出时间
 end_time <- Sys.time()
