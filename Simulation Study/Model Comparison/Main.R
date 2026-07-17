@@ -182,7 +182,7 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
 
 # 设定参数
 num_cores <- detectCores()
-all_times <- num_cores * 1
+all_times <- num_cores * 11
 size <- 500
 Beta <- matrix(c(-1, 2), ncol = 2)
 # Beta <- matrix(c(1, -2.5, 0, 0, 1.5, -2), ncol = 2)
