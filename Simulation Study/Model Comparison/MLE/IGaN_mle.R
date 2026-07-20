@@ -12,7 +12,7 @@ IGaN.MLE <- function(X, Z, Beta_new, Sigma_new, Lambda_new, max_iter = 1000, ep 
     
     s_new <- s
     
-    while (index == 0) {
+    while (k <= 1000) {
       s <- s_new
       q <- c + log(s) - digamma(s) + pi^2 * s / 6 - 1 / s
       s_new <- (q + sqrt(q^2 + 2 * pi^2 / 3)) / (pi^2 / 3)

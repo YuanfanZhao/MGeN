@@ -31,41 +31,34 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
   source("Density/IGauN_den.R")
   source("Density/RIGauN_den.R")
   source("Density/Mix_den.R")
-  source("Density/NPMN_den.R")
   
   # 导入似然函数
   source("Loglikelihood/GaN_log.R")
   source("Loglikelihood/IGaN_log.R")
   source("Loglikelihood/IGauN_log.R")
   source("Loglikelihood/RIGauN_log.R")
-  source("Loglikelihood/NPMN_log.R")
   
   # 导入MLE函数
   source("MLE/GaN_mle.R")
   source("MLE/IGaN_mle.R")
   source("MLE/IGauN_mle.R")
   source("MLE/RIGauN_mle.R")
-  source("MLE/NPMN_mle.R")
   
   # 导入评价指标函数
   source("Criterion/KLandISE.R")
   source("Criterion/MSE.R")
   
-  # 导入辅助函数
-  source("Auxiliary/Choose_M.R")
-  
   # 评价指标
-  KL.value <- matrix(nrow = number, ncol = 5)
-  ISE.value <- matrix(nrow = number, ncol = 5)
-  MSE.value <- matrix(nrow = number, ncol = 5)
-  M.value <- matrix(nrow = number, ncol = 3)
-  Rank.value <- array(dim = c(3, 5, number))
+  KL.value <- matrix(nrow = number, ncol = 4)
+  ISE.value <- matrix(nrow = number, ncol = 4)
+  MSE.value <- matrix(nrow = number, ncol = 4)
+  Rank.value <- array(dim = c(3, 4, number))
   
   iter <- 1
   while(iter <= number) {
     # 生成混合数据
-    Z <- cbind(rep(1, size))
-    # Z <- cbind(rep(1, size), rnorm(size), rpois(size, 2))
+    # Z <- cbind(rep(1, size))
+    Z <- cbind(rep(1, size), rnorm(size), rpois(size, 2))
     X <- rMix(size, Z, Beta, Sigma, Kurtosis, Ratio)
     
     # 区分训练集和测试集
@@ -77,7 +70,7 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
     
     
     
-    # 在训练集上拟合五个模型
+    # 在训练集上拟合四个模型
     
     # 矩估计确定初值
     s <- var(X.train)
@@ -122,24 +115,8 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
       NA
     })
     
-    M.opt <- tryCatch({
-      Choose.M(X.train, Z.train, Beta, Sigma, Kurtosis, Ratio)
-    }, error = function(e) {
-      NA
-    }, warning = function(w) {
-      NA
-    })
-    
-    NPMN.fit <- tryCatch({
-      NPMN.MLE(X.train, Z.train, Beta, s, min(M.opt))
-    }, error = function(e) {
-      NA
-    }, warning = function(w) {
-      NA
-    })
-    
-    if (!all(is.na(GaN.fit)) & !all(is.na(IGaN.fit)) & !all(is.na(IGauN.fit)) & !all(is.na(RIGauN.fit)) & !all(is.na(NPMN.fit))) {
-      if (GaN.fit$index == TRUE & IGaN.fit$index == TRUE & IGauN.fit$index == TRUE & RIGauN.fit$index == TRUE & NPMN.fit$index == TRUE) {
+    if (!all(is.na(GaN.fit)) & !all(is.na(IGaN.fit)) & !all(is.na(IGauN.fit)) & !all(is.na(RIGauN.fit))) {
+      if (GaN.fit$index == TRUE & IGaN.fit$index == TRUE & IGauN.fit$index == TRUE & RIGauN.fit$index == TRUE) {
         # 在测试集上测试拟合效果
         true_parameters <- list(
           Beta = Beta,
@@ -148,13 +125,12 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
           Ratio = Ratio
         )
         
-        # 把你的6个模型拟合得到的参数打包
+        # 把你的4个模型拟合得到的参数打包
         estimated_parameters <- list(
           GaN = list(Beta = GaN.fit$Beta, Sigma = GaN.fit$Sigma, Lambda = GaN.fit$Lambda),
           IGaN = list(Beta = IGaN.fit$Beta, Sigma = IGaN.fit$Sigma, Lambda = IGaN.fit$Lambda),
           IGauN = list(Beta = IGauN.fit$Beta, Sigma = IGauN.fit$Sigma, Lambda = IGauN.fit$Lambda),
-          RIGauN = list(Beta = RIGauN.fit$Beta, Sigma = RIGauN.fit$Sigma, Lambda = RIGauN.fit$Lambda), 
-          NPMN = list(Beta = NPMN.fit$Beta, Sigma = NPMN.fit$Sigma, p = NPMN.fit$p)
+          RIGauN = list(Beta = RIGauN.fit$Beta, Sigma = RIGauN.fit$Sigma, Lambda = RIGauN.fit$Lambda)
         )
         # KL散度和ISE
         evaluation1 <- KLandISE(X.test, Z.test, true_parameters, estimated_parameters)
@@ -168,28 +144,27 @@ Simulation <- function(number, size, Beta, Sigma, Kurtosis, Ratio) {
         KL.value[iter, ] <- evaluation1$KLD
         ISE.value[iter, ] <- evaluation1$ISE
         MSE.value[iter, ] <- evaluation2$MSE_pred
-        M.value[iter, ] <- as.numeric(M.opt)
         Rank.value[, , iter] <- Ran
         iter <- iter + 1
       }
     }
   }
   
-  return(list(KL = KL.value, ISE = ISE.value, MSE = MSE.value, M = M.value, Rank = Rank.value))
+  return(list(KL = KL.value, ISE = ISE.value, MSE = MSE.value, Rank = Rank.value))
 }
 
 # ==============================================================================================================================
 
 # 设定参数
 num_cores <- detectCores()
-all_times <- num_cores * 1
+all_times <- num_cores * 105
 size <- 500
-Beta <- matrix(c(-1, 2), ncol = 2)
-# Beta <- matrix(c(1, -2.5, 0, 0, 1.5, -2), ncol = 2)
+# Beta <- matrix(c(-1, 2), ncol = 2)
+Beta <- matrix(c(1, -2.5, 0, 0, 1.5, -2), ncol = 2)
 Sigma <- matrix(c(1, 0.5, 0.5, 2), nrow = 2)
 Kurtosis <- 2
 # Ratio <- c(0.25, 0.25, 0.25, 0.25)
-Ratio <- c(0, 0, 0, 1)
+Ratio <- c(0.1, 0.1, 0.1, 0.7)
 
 # ==============================================================================================================================
 
@@ -204,23 +179,29 @@ stopCluster(cl)
 KL.value <- result_part[[1]]$KL
 ISE.value <- result_part[[1]]$ISE
 MSE.value <- result_part[[1]]$MSE
-M.value <- result_part[[1]]$M
 Rank.value <- result_part[[1]]$Rank
 
 for (i in 2:num_cores) {
   KL.value <- rbind(KL.value, result_part[[i]]$KL)
   ISE.value <- rbind(ISE.value, result_part[[i]]$ISE)
   MSE.value <- rbind(MSE.value, result_part[[i]]$MSE)
-  M.value <- rbind(M.value, result_part[[i]]$M)
   Rank.value <- abind(Rank.value, result_part[[i]]$Rank, along = 3)
 }
 
 colMeans(KL.value) %>% round(digits = 4)
 colMeans(ISE.value) %>% round(digits = 4)
 colMeans(MSE.value) %>% round(digits = 4)
-colMeans(M.value) %>% round(digits = 4)
 apply(Rank.value, c(1, 2), mean) %>% round(digits = 4)
 apply(Rank.value, c(1, 2), mean) %>% colMeans() %>% round(digits = 4)
+
+result <- data.frame(KL = colMeans(KL.value), 
+                     ISE = colMeans(ISE.value), 
+                     MSE = colMeans(MSE.value), 
+                     Rank1 = apply(Rank.value, c(1, 2), mean)[1, ], 
+                     Rank2 = apply(Rank.value, c(1, 2), mean)[2, ], 
+                     Rank3 = apply(Rank.value, c(1, 2), mean)[3, ])
+
+write.csv(result, "C4_RIGauN.csv")
 
 # 结束运算，输出时间
 end_time <- Sys.time()

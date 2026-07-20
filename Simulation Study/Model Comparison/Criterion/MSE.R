@@ -1,5 +1,5 @@
 MSE <- function(Z_test, Beta_true, Beta_est, X_test = NULL) {
-  model_names <- c("GaN", "IGaN", "IGauN", "RIGauN", "NPMN")
+  model_names <- c("GaN", "IGaN", "IGauN", "RIGauN")
   
   # 初始化存储结果的向量
   MSE_mu_results <- numeric(length(model_names))
