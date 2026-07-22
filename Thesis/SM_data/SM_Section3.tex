@@ -1,0 +1,150 @@
+\section{$\!\!\!\!\!\!\!$. Supplementary Tables in Numerical Experiments}        % Section S3
+
+\subsection{Accuracy of point estimators}       % Section S3.1
+
+To investigate the accuracy of MLE and \textit{moment estimator} (ME) for $\GeN$ distributions and assess the performance of these two methods, we employ the \textit{mean square error} (\tsf{MSE}) and log-likelihood value (\tsf{Loglikelihood}) to evaluate the goodness of fit.
+
+In our simulations, we consider different sample sizes $n = 300(300)900$ and $R = 10$,000 sampling replications. We conduct the numerical experiments with following four cases:
+\begin{namelist}{0123456789}
+\item[\hspace*{-0.05cm} Case (A$_2$):] Independently generating $\{\ibX_i^{(r)}\}_{i=1}^n \ind \mbox{IGa-N}_2(\bmu_i, \bSi, \la)$ with true values being set as $\bB = (2, 0; -1, 0.5; 0, -3)$, $\bSi = (1, 0.5; 0.5, 2)$ and $\la = 1.5$;
+
+\item[\hspace*{-0.05cm} Case (A$_3$):] Independently generating $\{\ibX_i^{(r)}\}_{i=1}^n \iid \mbox{IGau-N}_2(\bmu, \bSi, \la)$ with the true values being set as $\bmu = (0.5, -1)^\top$, $\bSi = (2, -0.5; -0.5, 1)$ and $\la = 2$.
+\end{namelist}
+
+Given a combination of $\{n, r, \bmu, \bSi, \la\}$ for Case (A$_3$), let $\Y{obs}^{(r)} = \{\ibx_i^{(r)}\}_{i=1}^n$ denote the $r$-th observations with $r = 1, \dots, R$, where $\ibx_i^{(r)}$ is a realization of $\ibX_i^{(r)}$. We can compute the MLEs of parameters via N-EM algorithm, denoted by $\{\hbmu^{(r)}, \hbSi^{(r)}, \hla^{(r)}\}$ and MEs, denoted by $\{\hbmu_M^{(r)}, \hbSi_M^{(r)}, \hla_M^{(r)}\}$. Next, we calculate the \textit{average MLE} (\tsf{A-MLE}) and the \textit{average ME} (\tsf{A-ME}) with the corresponding \tsf{MSE} for each parameter based on the $R$ repetitions. The above results of Case (A$_3$) are summarized in Table \ref{zyf.four.S.tab1}.
+
+\vkU
+\baselineskip 0.10in
+\begin{Table} \label{zyf.four.S.tab1} {\rm  \ \  \hspace*{-0.5cm}{\bf .}
+Comparisons of MLEs, moment estimates and corresponding \tsf{MSE} for Case (A$_3$) under various sample sizes
+\vspace{-0.35cm}
+\begin{center}
+\renewcommand{\arraystretch}{1.2} \tabcolsep 0.07in \doublerulesep 0.2pt
+\begin{tabular}{clcrrrrrr}  \hline\hline
+    \MR{2}{*}{Size} & \MR{2}{*}{Method} & \MR{2}{*}{\tsf{Loglikelihood}} & \MC{6}{c}{Parameter} \\ \cline{4-9}
+    \MR{2}{*}{}     & \MR{2}{*}{}       & \MR{2}{*}{}                    & \MC{1}{c}{$\mu_1$}   & \MC{1}{c}{$\mu_2$} & \MC{1}{c}{$\sigma_{11}$} & \MC{1}{c}{$\sigma_{11}$} & \MC{1}{c}{$\sigma_{11}$} & \MC{1}{c}{$\la$} \\ \hline
+    \MR{4}{*}{300}  & \MR{2}{*}{MLE}    & \MR{2}{*}{$-$903.3779}         & 0.4996               & $-$1.0002          & 2.0003                   & $-$0.4984                & 0.9976                   & 2.0894           \\
+    \MR{4}{*}{}     & \MR{2}{*}{}       & \MR{2}{*}{}                    & (0.0051)             & (0.0025)           & (0.0504)                 & (0.0112)                 & (0.0127)                 & (0.1611)         \\ 
+    \MR{4}{*}{}     & \MR{2}{*}{ME}     & \MR{2}{*}{$-$906.5431}         & 0.5006               & $-$1.0003          & 2.0042                   & $-$0.4998                & 0.9996                   & 2.4606           \\
+    \MR{4}{*}{}     & \MR{2}{*}{}       & \MR{2}{*}{}                    & (0.0001)             & (3.4e-5)           & (0.0572)                 & (0.0140)                 & (0.0145)                 & (1.0019)         \\ \hdashline
+    \MR{4}{*}{600}  & \MR{2}{*}{MLE}    & \MR{2}{*}{$-$1809.109}         & 0.5003               & $-$0.9997          & 1.9989                   & $-$0.5003                & 0.9979                   & 2.0403           \\
+    \MR{4}{*}{}     & \MR{2}{*}{}       & \MR{2}{*}{}                    & (0.0025)             & (0.0012)           & (0.0248)                 & (0.0054)                 & (0.0061)                 & (0.0581)         \\ 
+    \MR{4}{*}{}     & \MR{2}{*}{ME}     & \MR{2}{*}{$-$1812.87}          & 0.5001               & $-$0.9998          & 2.0007                   & $-$0.5005                & 0.9989                   & 2.2400           \\
+    \MR{4}{*}{}     & \MR{2}{*}{}       & \MR{2}{*}{}                    & (3.3e-05)            & (8e-06)            & (0.0280)                 & (0.0070)                 & (0.0070)                 & (0.3747)         \\ \hdashline
+    \MR{4}{*}{900}  & \MR{2}{*}{MLE}    & \MR{2}{*}{$-$2716.536}         & 0.4992               & $-$0.9996          & 2.0018                   & $-$0.5007                & 0.9998                   & 2.0273           \\
+    \MR{4}{*}{}     & \MR{2}{*}{}       & \MR{2}{*}{}                    & (0.0016)             & (8.0e-4)           & (0.0167)                 & (0.0037)                 & (0.0041)                 & (0.0380)         \\ 
+    \MR{4}{*}{}     & \MR{2}{*}{ME}     & \MR{2}{*}{$-$2720.22}          & 0.4993               & $-$0.9997          & 2.0025                   & $-$0.5007                & 1.0004                   & 2.1696           \\
+    \MR{4}{*}{}     & \MR{2}{*}{}       & \MR{2}{*}{}                    & (1.4e-5)             & (4.0e-6)           & (0.0191)                 & (0.0046)                 & (0.0047)                 & (0.2301)         \\ \hline\hline
+\end{tabular}
+\end{center} }
+\end{Table}
+\vspace{-0.15cm}
+\noi  {\small  The MSEs corresponding to MLE and moment estimation are shown in parentheses. \\
+               The convergence accuracy of MLE is $10^{-8}$.}
+\baselineskip 0.30in
+
+\vkL
+For the Case (A$_2$) with covariate, we independently generate $\ibzi^{(r)} = (1, z_{1i}^{(r)}, z_{2i}^{(r)})^\top$ with
+$$
+    z_{1i}^{(r)} \iid N(0, 1) \qand z_{12}^{(r)} \iid \Poisson(2), \qfor i = 1, \dots, n.
+$$
+The \tsf{Loglikelihood}, \tsf{A-MLE} and corresponding \tsf{MSE} for Case (A$_2$) are presented in Table \ref{zyf.four.S.tab2}. We found that with the increase of sample size $n$, the MLEs and MEs of parameters becomes more and more accurate and stable. Specifically, \tsf{A-MLE} and \tsf{A-ME} is getting closer to the set true value, and \tsf{MSE} is getting smaller.
+
+\vkU
+\baselineskip 0.10in
+\begin{Table} \label{zyf.four.S.tab2} {\rm  \ \  \hspace*{-0.5cm}{\bf .}
+Comparisons of \tsf{Loglikelihood}, \tsf{A-MLE}s with corresponding \tsf{MSE} for Case (A$_2$) under various sample sizes
+\vspace{-0.1cm}
+\begin{center}
+\renewcommand{\arraystretch}{1.2} \tabcolsep 0.135in \doublerulesep 0.2pt
+\begin{tabular}{crcrr}  \hline\hline
+    Size           & \tsf{Loglikelihood}  & Parameter & \MC{1}{c}{\tsf{A-MLE}}                                                                                  & \MC{1}{c}{\tsf{MSE}}                                                                               \\ \hline
+    \MR{3}{*}{300} & \MR{3}{*}{$-$900.7254} & $\bB$     & $\left(\begin{array}{rr} 1.9994 & -0.0024 \\ -1.0003 & 0.4997 \\ 0.0003 & -2.9990 \end{array}\right)$ & $\left(\begin{array}{rr} 0.0070 & 0.0145 \\ 0.0025 & 0.0049 \\ 0.0012 & 0.0024 \end{array}\right)$ \\
+    \MR{3}{*}{}    & \MR{3}{*}{}            & $\bSi$    & $\left(\begin{array}{rr} 0.9833 & 0.4903 \\ 0.4903 & 1.9649 \end{array}\right)$                       & $\left(\begin{array}{rr} 0.0117 & 0.0107 \\ 0.0107 & 0.0464 \end{array}\right)$                    \\
+    \MR{3}{*}{}    & \MR{3}{*}{}            & $\la$     & 1.6421                                                                                                & 0.1087                                                                                             \\ \hdashline
+    \MR{3}{*}{600} & \MR{3}{*}{$-$1806.197} & $\bB$     & $\left(\begin{array}{rr} 2.0001 & 0.0000 \\ -1.0004 & 0.5005 \\ -0.0001 & -3.0002 \end{array}\right)$ & $\left(\begin{array}{rr} 0.0035 & 0.0069 \\ 0.0011 & 0.0023 \\ 0.0006 & 0.0012 \end{array}\right)$ \\
+    \MR{3}{*}{}    & \MR{3}{*}{}            & $\bSi$    & $\left(\begin{array}{rr} 0.9938 & 0.4962 \\ 0.4962 & 1.9868 \end{array}\right)$                       & $\left(\begin{array}{rr} 0.0058 & 0.0054 \\ 0.0054 & 0.0232 \end{array}\right)$                    \\
+    \MR{3}{*}{}    & \MR{3}{*}{}            & $\la$     & 1.5413                                                                                                & 0.0375                                                                                             \\ \hdashline
+    \MR{3}{*}{900} & \MR{3}{*}{$-$2712.582} & $\bB$     & $\left(\begin{array}{rr} 1.9988 & -0.0008 \\ 1.0000 & 0.4996 \\ 0.0003 & -2.9998 \end{array}\right)$  & $\left(\begin{array}{rr} 0.0023 & 0.0046 \\ 0.0008 & 0.0015 \\ 0.0004 & 0.0008 \end{array}\right)$ \\
+    \MR{3}{*}{}    & \MR{3}{*}{}            & $\bSi$    & $\left(\begin{array}{rr} 0.9974 & 0.4985 \\ 0.4985 & 1.9950 \end{array}\right)$                       & $\left(\begin{array}{rr} 0.0038 & 0.0035 \\ 0.0035 & 0.0157 \end{array}\right)$                    \\
+    \MR{3}{*}{}    & \MR{3}{*}{}            & $\la$     & 1.5204                                                                                                & 0.0249                                                                                             \\ \hline\hline
+\end{tabular}
+\end{center} }
+\end{Table}
+\vspace{-0.1cm}
+\noi  {\small   The convergence accuracy of MLE is $10^{-8}$.}
+\baselineskip 0.30in
+
+\subsection{Bayesian estimation and credit interval}
+
+This section, we conducts simulation studies to evaluate the finite--sample performance of the proposed ECM and DA algorithms, specifically focusing on the accuracy of posterior modes, posterior means, and the reliability of Bayesian credible intervals. We consider the size of $n = 500$ with $R = 1000$ independent replications for each scenario. To comprehensively evaluate the algorithms under diverse data structures, we examine four distinct distributions characterized by different parameter configurations:
+\begin{namelist}{0123456789}
+\item[\hspace*{-0.05cm} Case (B$_1$):] Independently generating $\{\ibX_i^{(r)}\}_{i=1}^n \iid \mbox{Ga-N}_2(\bmu, \bSi, \la)$ with true values $\bmu = (-1, 2)^\top$, $\bSi = (1, -0.5; -0.5, 2)$ and $\la = 2.5$ and conjugate prior;
+
+\item[\hspace*{-0.05cm} Case (B$_4$):] Independently generating $\{\ibX_i^{(r)}\}_{i=1}^n \iid \mbox{RIGau-N}_2(\bmu, \bSi, \la)$ with true values $\bmu = (-1, 0)^\top$, $\bSi = (2, 0.75; 0.75, 1)$ and $\la = 0.5$ and non-information prior.
+\end{namelist}
+Given a combination of $\{n, r, \bmu, \bSi, \la\}$ for Case (B$_1$), we generate the observed data $\Y{obs}^{(r)} = \{\ibx_i^{(r)}\}_{i=1}^n$ and compute the MLE $\hla^{(r)}$ via N-EM algorithm. By fixing $\hla^{(r)}$ in Ga-N$_2$ distributions, we calculate the posterior mode $\{\tilde{\bmu}^{(r)}, \tilde{\bSi}^{(r)}\}$, generate the posterior sample and obtain the posterior mean $\{\bar{\bmu}^{(r)}, \bar{\bSi}^{(r)}\}$ with their 95\% Bayesian CIs. The conjugate prior is set as
+$$
+    (\bmu, \bSi) \sim \NIW_d(\bmu_0, \ka_0, \bLa_0, \nu_0),
+$$
+where $\bmu_0 = \hbmu_M^{(r)}$, $\ka_0 = 0.1$, $\bLa_0 = \hbSi_M^{(r)}$ and $\nu_0 = 4$. To characterize the accuracy of Bayesian estimation and the reliability of CIs, we adopt \tsf{MSE} and interval \textit{coverage rate} (\tsf{CR}) as evaluation criterion.
+
+The results for Case (B$_1$) and (B$_4$) are presented in Table \ref{zyf.four.S.tab3}. We found that the posterior mode and mean is closed to the set true value, and \textsf{MSE} is small. For interval estimation, the \textsf{CR} is slightly lower than 95\% due to the small sample size. Overall, the Bayesian estimations and CIs are very accurate and reliable.
+
+\newpage
+\vkU
+\baselineskip 0.10in
+\begin{Table} \label{zyf.four.S.tab3} {\rm  \ \  \hspace*{-0.5cm}{\bf .}
+Bayesian estimations and CIs of parameters $\{\bmu, \bSi\}$ with \tsf{MSE} and \tsf{CR} for Case (B$_1$) and Case (B$_4$)
+\vspace{-0.3cm}
+\begin{center}
+\renewcommand{\arraystretch}{1.2} \tabcolsep 0.08in \doublerulesep 0.2pt
+\begin{tabular}{ccrrrrrr}  \hline\hline
+    Case               & Parameter     & \makecell[c]{Posterior \\ Mode} & \makecell[c]{\tsf{MSE} for \\ Mode} & \makecell[c]{Posterior \\ Mean} & \makecell[c]{\tsf{MSE} for \\ Mean} & \MC{1}{c}{Bayesian CI}          & \MC{1}{c}{\tsf{CR}} \\ \hline
+    \MR{5}{*}{(B$_1$)} & $\mu_1$       & $-$0.9981                       & 0.0015                              & $-$0.9981                       & 0.0015                              & $[-1.0751, -0.9211]$            & 0.9536              \\
+    \MR{5}{*}{}        & $\mu_2$       & 1.9992                          & 0.0031                              & 1.9992                          & 0.0031                              & $[1.8904, 2.1076]$              & 0.9555              \\
+    \MR{5}{*}{}        & $\sigma_{11}$ & 0.9806                          & 0.0095                              & 1.0152                          & 0.0107                              & $[0.8559, 1.1635]$              & 0.8958              \\
+    \MR{5}{*}{}        & $\sigma_{12}$ & $-$0.4892                       & 0.0072                              & $-$0.5101                       & 0.0078                              & $[-0.6582, -0.3540]$            & 0.9252              \\
+    \MR{5}{*}{}        & $\sigma_{22}$ & 1.9536                          & 0.0423                              & 2.0153                          & 0.0453                              & $[1.7051, 2.3185]$              & 0.8627              \\ \hdashline
+    \MR{5}{*}{(B$_4$)} & $\mu_1$       & $-$0.0016                       & 0.0021                              & $-$1.0016                       & 0.0021                              & $[-1.0907, -0.9127]$            & 0.9479              \\
+    \MR{5}{*}{}        & $\mu_2$       & $-$0.0007                       & 0.0010                              & $-$0.0007                       & 0.0010                              & $[-0.0637, 0.0622]$             & 0.9441              \\
+    \MR{5}{*}{}        & $\sigma_{11}$ & 1.9929                          & 0.0500                              & 2.0248                          & 0.0559                              & $[1.6846, 2.3929]$              & 0.8873              \\
+    \MR{5}{*}{}        & $\sigma_{12}$ & 0.7471                          & 0.0108                              & 0.7598                          & 0.0134                              & $[0.5830, 0.9513]$              & 0.9214              \\
+    \MR{5}{*}{}        & $\sigma_{22}$ & 0.9948                          & 0.0117                              & 1.0060                          & 0.0148                              & $[0.8409, 1.1945]$              & 0.8977              \\ \hline\hline
+\end{tabular}
+\end{center} }
+\end{Table}
+\vspace{-0.3cm}
+\noi  {\small   The convergence accuracy of MLE is $10^{-8}$.}
+\baselineskip 0.30in
+
+\subsection{Model comparison}       % Section 4.3
+
+To assess the performance of the goodness-of-fit tests among the four specific distributions (i.e., Ga-N$_d$, IGa-N$_d$, IGau-N$_d$ and RIGau-N$_d$) of the Ge-N$_d$ family, we adopt \textit{Kullback--Leibler} (KL) divergence, \textit{integrated squared error} (ISE) and MSE as the evaluation criteria.
+
+In our numerical studies, the sample size, the number of sampling replications are respectively set to be $n = 500$ and $R = 10$,000. We set the parameters $\bB = (1, 0; -2.5, 1.5; 0, -2)$, $\bSi = (1, 0.5; 0.5, 2)$ and $\la$ in each of the four specific distributions (denoted by $\Two{\la}{Ga}$, $\Two{\la}{IGa}$, $\Two{\la}{IGau}$, $\Two{\la}{RIGau}$, respectively) can be determined by the common marginal kurtosis $\Kurt(X_j) = 2$. For a given $\{n, r, \bB, \bSi, \Kurt(X_j)\}$ with $r = 1, \dots, R$, firstly, we independently generate the covariate $\ibzi^{(r)} = (1, z_{1i}^{(r)}, z_{2i}^{(r)})^\top$ with
+$$
+    z_{1i}^{(r)} \iid N(0, 1) \qand z_{12}^{(r)} \iid \Poisson(2), \qfor i = 1, \dots, n,
+$$
+and the samples $\{\ibX_i^{(r)} = \ibx_i^{(r)}\}_{i=1}^n$ from the mixed distribution:
+\begin{eqnarray*}
+    && p_1 \cdot \mbox{Ga-N}_d(\bmu_i^{(r)}, \bSi, \Two{\la}{Ga}) + p_2 \cdot \mbox{IGa-N}_d(\bmu_i^{(r)}, \bSi, \Two{\la}{IGa}) + p_3 \cdot \mbox{IGau-N}_d(\bmu_i^{(r)}, \bSi, \Two{\la}{IGau}) \\ [2mm]
+    && +\; p_4 \cdot \mbox{RIGau-N}_d(\bmu_i^{(r)}, \bSi, \Two{\la}{RIGau}),
+\end{eqnarray*}
+where the location parameter $\bmu_i^{(r)} = \bB^\top \ibzi^{(r)}$. The weights $p_s \ge 0$ for $s = 1, \dots, 4$ with $\sum_{s=1}^4 p_s = 1$. We consider the following situations for selecting $\ibp = (p_1, \dots, p_4)^\top$:
+\begin{namelist}{0123456789}
+\item[\hspace*{-0.05cm} Case (C$_3$):] Uniform five--component mixed distribution: $\ibp=1/4\times\1_4$;
+
+\item[\hspace*{-0.05cm} Case (C$_4$):] Dominant one--component mixed distribution: One specific case of Ge-N$_2$ distribution has a larger weight $p_s = 0.7$ and all others have smaller weights $p_{s'} = 0.1$.
+\end{namelist}
+
+Based on the generated sample $\{\ibx_i^{(k)} \}_{i=1}^n$, we can compute the MLEs $\{\hbB^{(r)}, \hbSi^{(r)}, \hla^{(r)}\}$ for the four specific distributions of the Ge-N$_2$ family via the N-EM algorithm, calculate four KL divergence values $\{\tsf{KL}_1^{(r)}, \dots, \tsf{KL}_4^{(r)}\}$, ISE values $\{\tsf{ISE}_1^{(r)}, \dots, \tsf{ISE}_4^{(r)}\}$ and MSE values $\{\tsf{MSE}_1^{(r)}, \dots, \tsf{MSE}_4^{(r)}\}$. Then we sort them to obtain the corresponding ranks. Finally, the average KL divergences, average ISE, average MSE and the average ranks (in parentheses) are reported in Figure \ref{zyf.four.S.fig5}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/plot18.png}
+    \caption{Model comparisons based on $K=1$,000 replications for Cases (C$_3$) and (C$_4$).}
+    \label{zyf.four.S.fig5}
+\end{figure}
+
+From the results in Figure \ref{zyf.four.S.fig5}, we found that the dominant Ge-N$_2$ distribution provides the best fitting effect, which outstanding performance is significantly better than other distributions. In general, the IGau-N$_2$ and RIGau-N$_2$ distributions have good fitting effect in various mixed cases, means these distributions are robust to fit the complex data.

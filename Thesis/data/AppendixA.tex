@@ -1,0 +1,91 @@
+\section{$\!\!\!\!\!\!\!$. Some Technical Derivations}      % Appendix A
+
+\subsection{Histogram-based discretization method}\label{zyf.four.sec:discretization}     % Appendix A.1
+
+This appendix introduces a commonly used non-parametric method for representing the distribution of continuous \trv as a finite discrete probability masses, which is usually called histogram-based discretization method, which approximates the cdf as a step function. This method provides the theoretical background and formal description for the discrete distribution estimation used in this \S\ref{zyf.four.sec:NPMN.definition}.
+
+The basic idea of histogram-based discretization method is to use interval probability mass instead of continuous density function to describe the distribution structure of \trv by finite partition of support set. Specifically, consider the \trv $X$ with positive support $\bbR_+$, there exists a constant $S$ large enough such that the probability $\Pr(X \in [0, S] > 1 - \ve)$ holds for any $\ve > 0$. We construct a partition on interval $\bbS \teq[0, S]$ as
+$$
+    \Pi: 0 = x_0 < x_1 < \cdots < x_n = S.
+$$
+Thus, $\bbS$ is divided into several disjoint sub-intervals $\bbS_i = (x_{i-1}, x_i]$ for $i = 1, \dots, n$. The histogram-based discretization method does not attempt to describe the detailed distribution structure of $X$ in each interval, but assumes that the distribution behavior of $X$ is statistically indistinguishable in the same interval. Therefore, the focus of modeling has shifted from the continuous density function to the following probability:
+$$
+    p_i = \Pr(X \in \bbS_i), \quad i = 1, \dots, n,
+$$
+that is, the probability of $X$ falling into each sub-interval. In this representation, the continuous distribution is approximated as a discrete structure characterized by finite probability mass, which significantly reduces the modeling complexity.
+
+In the discrete distribution representation based on histogram-based discretization method, $p_i$ describes the probability of \trv $X$ falling into interval $\bbS_i$. At the same times, in model construction, it is necessary to select a representative support point in each interval. In practical application, common support points include left-endpoint $x_{i-1}$, middle point of interval $(x_{i-1} + x_i) / 2$ and right-endpoint $x_i$. As the mesh size $\|\Pi\| = \max_i (x_i - x_{i-1}) \to 0$, the selection of different support points is equivalent in the sense of uniform convergence. In this paper, in order to simplify the expression and keep consistent with the subsequent derivation of likelihood function, the right-endpoint of each interval is selected as the support point for calculation. In conclusion, based on the above idea, the distribution of $X$ can be expressed as the following form:
+$$
+    p(X = x_i) = p_i, \quad i = 1, \dots, n \qor F_X(x | \ibp) = \sum_{i=1}^n p_i \cdot I(x \ge x_i),
+$$
+where $\ibp = (p_1, \dots, p_n)^\top$ an unknown parameter vector of weights satisfying $\ibp \in \bbT_n$.
+
+\subsection{Riemann–-Stieltjes integral and approximation}\label{zyf.four.sec:RSintegral}        % Appendix A.2
+
+This section provides a brief introduction to the Riemann--Stieltjes integral and its approximation, which serves as the theoretical foundation for the log-likelihood approximation adopted in \S\ref{zyf.four.sec:Likelihoodapproximation}.
+
+\begin{definition}{\rm \textsf{(Riemann–-Stieltjes integral).} Assume that $g: [a, b] \to \bbR$ be a real-valued function and $F: [a, b] \to \bbR$ be a cumulative distribution function, if the integral exists, we call
+\begin{eqnarray}    \label{zyf.four.A.1}
+    \int_a^b g(x) \rd F(x)
+\end{eqnarray}
+the Riemann–-Stieltjes integral of function $g(x)$ with respect to distribution $F(x)$. Specifically, we take a partition on interval $[a, b]$ as
+\begin{eqnarray}    \label{zyf.four.A.2}
+    \Pi: a = x_0 < x_1 < \cdots < x_n = b,
+\end{eqnarray}
+and select a support point $\xi_i \in (x_{i-1}, x_i]$ for $i = 1, \dots, n$. The corresponding Riemann–-Stieltjes finite sum is
+$$
+    S(\Pi, g, F) = \sum_{i=1}^n g(\xi_i) [F(x_i) - F(x_{i-1})].
+$$
+As the mesh size $\|\Pi\| = \max_i (x_i - x_{i-1}) \to 0$, the sum converges to (\ref{zyf.four.A.1}) independent of the choice of $\xi_i$. When $F(x) = x$, the Riemann–-Stieltjes integral reduces to the classical Riemann integral. \hfill$\|$
+}\end{definition}
+
+The Riemann--Stieltjes approximation replaces the continuous measure induced by $F(x)$ with a discrete measure defined on a fine partition of the integration domain. For the partition (\ref{zyf.four.A.2}), we defined the increment
+$$
+    p_m = F(x_i) - F(x_{i-1}), \quad i = 1, \dots, n.
+$$
+Then $\{p_i\}_{i=1}^n$ forms a probability mass function for distribution $F(\cdot)$ on support points $\{\xi_i\}_{i=1}^n$. Therefore, the Riemann--Stieltjes integral can be approximated by
+\begin{eqnarray}    \label{zyf.four.A.3}
+     \int_a^b g(x) \rd F(x) \ap \sum_{i=1}^n p_i g(\xi_i),
+\end{eqnarray}
+where a common and convenient choice for support points are the right endpoint $\xi_i = x_i$. If $g(x)$ is continuous on $[a, b]$ and the mesh size $\|\Pi\| \to 0$, then the Riemann--Stieltjes approximation converges to the true integral:
+$$
+    \sum_{i=1}^n p_i g(x_i) \to \int_a^b g(x) \rd F(x),
+$$
+which provides the theoretical justification for replacing a continuous distribution with a discrete approximation when the partition is sufficiently fine.
+
+\subsection{Gauss--Laguerre quadrature}\label{zyf.four.sec:GLquadrature}      % Appendix A.3
+
+The general goal of numerical integration is approximate calculation
+$$
+    \int_a^b w(x) g(x) \rd x,
+$$
+where $w(x)$ is the weight function. The core idea of Gaussian quadrature formula is: Under a given number of nodes, the integral is completely accurate for polynomials of as high order as possible with a finite number of optimal nodes and weights. For the weight function $w(x) = \e^{-x}$ and the interval $(0, \infty)$, the Gauss--Laguerre quadrature provides the formula for the optimal numerical integral.
+
+The standard formula of Gauss--Laguerre quadrature is
+$$
+    \int_0^\infty \e^{-x} g(x) \rd x \ap \sum_{i=1}^n p_i g(x_i),
+$$
+where $n$ is the known number of nodes, $\{x_i\}_{i=1}^n$ are the nodes of integration, and $\{p_i\}_{i=1}^n$ are the corresponding weights. In order to achieve theoretically optimal integration accuracy, we select the integration node $\{x_i\}_{i=1}^n$ as the zero points of the Laguerre polynomial
+$$
+    L_n(x) = \frac{\e^x}{n!} \frac{\rd^n (\e^{-x} x^n)}{\rd x^n},
+$$
+which satisfies
+\begin{namelist} {01}
+    \item[\hspace{0.08cm} (1)] Defined on the positive interval $(0, \infty)$;
+    \item[\hspace{0.08cm} (2)] Orthogonal to weight function $\e^{-x}$, that is,
+    $$
+        \int_0^\infty L_m(x) L_n(x) \e^{-x} \rd x = 0 \quad \mbox{for any } m \ne n.
+    $$
+\end{namelist}
+Therefore, $L_n(x)$ is a polynomial of degree $n$ defined on a positive real line, with $n$ different real zeros, and these zeros are exactly the nodes of Gauss--Laguerre quadrature.
+
+\begin{theorem}{\rm \textsf{(Gauss--Laguerre quadrature theorem).} Suppose that $x_1, \dots, x_n$ are zeros of $L_n(x)$ with degree $n$, then there exist a unique set of weights $p_1, \dots, p_n$ such that
+$$
+    \int_0^\infty \e^{-x} g(x) \rd x = \sum_{i=1}^n p_i g(x_i)
+$$
+for any function $g(\cdot)$ satisfying $\deg(g) \le 2n - 1$. \hfill$\|$
+}\end{theorem}
+And the derivation of weights $\{p_i\}_{i=1}^n$ is based on the Christoffel--Darboux formula of Laguerre polynomials, which theoretical expression is
+$$
+    p_i = \frac{x_i}{(n + 1)^2 [L_{n+1}(x_i)]^2} = \frac{1}{x_i [L_n'(x_i)]^2}, \quad i = 1, \dots, n.
+$$

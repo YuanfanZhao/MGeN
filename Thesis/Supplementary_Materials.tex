@@ -1,0 +1,32 @@
+\documentclass[12pt]{article}
+
+% 导入引言区
+\input{sp/Preamble}
+
+% 导入参考文献库
+\addbibresource{ref/SM_refs.bib}
+
+\begin{document}
+
+% 导入定义符号
+\input{sp/Symbol}
+
+\voffset -0.5truecm \hoffset -1.5truecm
+
+% 插入标题、作者信息、摘要和关键词
+\input{SM_data/SM_Frontmatter}
+
+% 插入补充材料正文
+\appendix
+\renewcommand{\thesection}{S\arabic{section}}
+
+\input{SM_data/SM_Section1}
+\input{SM_data/SM_Section2}
+\input{SM_data/SM_Section3}
+
+% 插入参考文献
+\renewcommand*{\bibfont}{\normalsize\baselineskip 0.30in}
+% \nocite{*}
+\printbibliography[title = {Reference}]
+
+\end{document}

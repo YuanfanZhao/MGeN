@@ -1,0 +1,12 @@
+\section{$\!\!\!\!\!\!\!$. Some Related Distributions}      % Appendix B
+
+\subsection{Inverse Wishart distribution}\label{zyf.four.sec:NIW}       % Appendix B.1
+
+A \trv $\bSi$ is said to follow the \textit{Inverse Wishart} ($\IWishart_d$) distribution with parameters $\bPsi$ and $\nu$ if its pdf is
+\begin{eqnarray*}
+    \IWishart_d(\bSi | \bPsi, \nu) = \frac{|\bPsi|^{\nu/2}}{2^{d\nu/2} \Ga_d(\nu/2)} |\bSi|^{-(\nu + d + 1)/2} \exp\left\{-\frac{1}{2}\tr\left(\bPsi\bSi^{-1}\right)\right\},
+\end{eqnarray*}
+where $\bSi$ is a positive definite matrix of $d \times d$, $\bPsi$ is also a positive definite matrix of $d \times d$, called the scale matrix, $\nu$ is the degree of freedom, usually requiring $\nu > d - 1$ to ensure the expectation of distribution exists and $\Ga_d(\cdot)$ is the multivariate gamma function. The $\IWishart_d$ distribution is a probability distribution used to describe positive definite matrices and is commonly used in Bayesian statistics as a prior distribution for covariance matrices, which is the inverse distribution of the Wishart distribution. And the expectation of the $\IWishart_d$ distribution is
+\begin{eqnarray*}
+    E(\bSi) = \frac{\bPsi}{\nu - d - 1}. 
+\end{eqnarray*}

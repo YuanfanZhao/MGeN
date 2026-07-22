@@ -1,0 +1,69 @@
+\section{$\!\!\!\!\!\!\!$. Some Technical Derivations and Related Distributions}        % Section S2
+
+\subsection{Generalized inverse Gaussian distribution}\label{zyf.four.S.sec:GIGau}      % Section S2.1
+
+A positive \trv $Y$ is said to follow the GIGau distribution (\cite{Jorgensen2012}) with parameters $a \, (>0)$, $b \, (>0)$ and $p \, (\in\bbR)$, denoted by $Y\sim\GIGau(a, b, p)$, if its pdf is
+\begin{eqnarray}    \label{zyf.four.S2.1}
+   \GIGau(y|a,b,p) = C_0y^{p-1} \exp \left[-\frac{1}{2} \left(ay+\frac{b}{y}\right) \right],\quad y>0,
+\end{eqnarray}
+where the normalizing constant $C_0$ is
+$$
+    C_0=\left\{\int_0^{\infty}y^{p-1}\exp\left[-\frac{1}{2} \left(ay+\frac{b}{y}\right)\rd y\right]\right\}^{-1}=\frac{(a/b)^{p/2}}{2K_p(\sqrt{ab})}
+$$
+with $K_p(z)$ being the modified Bessel function of the second kind defined as
+\begin{eqnarray}    \label{zyf.four.S2.2}
+   K_p(z) = \frac{1}{2}\int_0^{\infty}t^{p-1} \exp\left[-\frac{z}{2}\left(t+\frac{1}{t} \right)\right]\rd t.
+\end{eqnarray}
+For Bessel function $K_p(z)$, we have the following properties:
+\begin{eqnarray*}
+   K_p(z)&=&K_{-p}(z), \quad  K_{p+1}(z) = \frac{2p}{z}K_p(z) +K_{p-1}(z) \qand  \\ [2mm]
+   K_{1/2}(z)&=&\sqrt{\frac{\pi}{2z}}\exp(-z).
+\end{eqnarray*}
+And if $Y\sim\GIGau(a,b,p)$, we have the expectations of $Y^k$ and $\log Y$ are as follows:
+\begin{eqnarray*}
+   E(Y^k)&=&\frac{K_{p+k}(\sqrt{ab})}{K_p(\sqrt{ab})}\left(\frac{b}{a}\right)^{k/2},\quad k \in\bbN_+, \non \\ [2mm]
+   E(\log Y)&=& \frac{1}{2} \log\left(\frac{b}{a} \right) +\frac{\pa } {\pa  p} \log K_p(\sqrt{ab}).
+\end{eqnarray*}
+Specifically, when $a=0$, $b=0$, $p=-0.5$ and $p = 0.5$, the GIGau distribution degenerates to the inverse gamma, gamma, inverse Gaussian and reciprocal inverse Gaussian distributions, respectively.
+
+\subsection{The root of $C+\log(s-1)+1/(s-1)-\psi(s)= 0$ with $s>1$ via a US algorithm}\label{zyf.four.S.sec:US1}  % Section S2.2
+
+The aim of this appendix is to solve the root of the equation $g(s)=C+\log(s-1)+1/(s-1)-\psi(s)= 0$ with $s>1$ by employing a US algorithm. Since
+\begin{eqnarray}
+   g'(s)&=&\frac{1}{s-1}-\frac{1}{(s-1)^2}-\psi'(s)>-\psi'(s)=-\sum_{m=0}^{\infty}\frac{1}{(m+s)^2}=-\frac{1}{s^2}-\sum_{m=1}^{\infty}\frac{1}{(m+s)^2} \non \\ [2mm]
+   &>&-\frac{1}{s^2}-\sum_{m=1}^{\infty}\frac{1}{m^2}=-\frac{1}{s^2}-\frac{\pi^2}{6}\;\teq\;b(s), \non
+\end{eqnarray}
+the US iteration for calculating $s^{(t+1)}$ is
+\begin{eqnarray}
+   s^{(t+1)}&=&\sol\left\{g(s^{(t)})+\int_{s^{(t)}}^{s}b(z)\rd z=0,\;\forall\;s,s^{(t)}>1\right\} \non \\ [2mm]
+   &=&\sol\left\{g(s^{(t)})+\frac{1}{s}-\frac{\pi^2}{6}s-\frac{1}{s^{(t)}}+\frac{\pi^2}{6}s^{(t)}=0,\;\forall\;s,s^{(t)}>1\right\} \non \\ [2mm]
+   &=&\sol\left\{\frac{\pi^2}{6}s^2-q^{(t)}s-1=0,\;\forall\;s,s^{(t)}>1\right\} \non \\ [2mm]
+   &=&\frac{q^{(t)}+\sqrt{q^{(t)2}+2\pi^2/3}}{\pi^2/3}, \non
+\end{eqnarray}
+where
+\begin{eqnarray}
+   q^{(t)}=C+\log(s^{(t)}-1)+\frac{1}{s^{(t)}-1}-\psi(s^{(t)})+\frac{\pi^2s^{(t)}}{6}-\frac{1}{s^{(t)}}. \non
+\end{eqnarray}
+
+\subsection{The root of $C+\log s-\psi(s)= 0$ with $s>0$ via a US algorithm}\label{zyf.four.S.sec:US2}  % Section S2.3
+
+The aim of this appendix is to solve the root of the equation $g(s)=C+\log s-\psi(s)= 0$ with $s>0$ by employing a US algorithm. We know the digamma function  $\psi(\cdot)$ is defined as
+\begin{eqnarray}
+   \psi(s)\teq\frac{\Gamma'(s)}{\Ga(s)}=-\gamma_0+\sum_{m=0}^{\infty}\left(\frac{1}{m+1}-\frac{1}{m+s}\right), \non
+\end{eqnarray}
+where $\gamma_0=\lim\limits_{n\to\infty}\left(\sum\limits_{m=1}^nm^{-1}-\log n\right)\approx0.5772$ is the Euler--Mascheroni constant. Since
+\begin{eqnarray}
+   g'(s)&=&\frac{1}{s}-\psi'(s)>-\psi'(s)=-\sum_{m=0}^{\infty}\frac{1}{(m+s)^2}=-\frac{1}{s^2}-\sum_{m=1}^{\infty}\frac{1}{(m+s)^2} \non \\ [2mm]
+   &>&-\frac{1}{s^2}-\sum_{m=1}^{\infty}\frac{1}{m^2}=-\frac{1}{s^2}-\frac{\pi^2}{6}\;\teq\;b(s), \non
+\end{eqnarray}
+the US iteration for calculating $s^{(t+1)}$ is
+\begin{eqnarray}
+   s^{(t+1)}&=&\sol\left\{g(s^{(t)})+\int_{s^{(t)}}^{s}b(z)\rd z=0,\;\forall\;s,s^{(t)}>0\right\} \non \\ [2mm]
+   &=&\sol\left\{g(s^{(t)})+\frac{1}{s}-\frac{\pi^2}{6}s-\frac{1}{s^{(t)}}+\frac{\pi^2}{6}s^{(t)}=0,\;\forall\;s,s^{(t)}>0\right\} \non \\ [2mm]
+   &=&\sol\left\{\frac{\pi^2}{6}s^2-q^{(t)}s-1=0,\;\forall\;s,s^{(t)}>0\right\} \non \\ [2mm]
+   &=&\frac{q^{(t)}+\sqrt{q^{(t)2}+2\pi^2/3}}{\pi^2/3}, \non
+\end{eqnarray}
+where
+\begin{eqnarray}
+   q^{(t)}=C+\log s^{(t)}-\psi(s^{(t)})+\frac{\pi^2s^{(t)}}{6}-\frac{1}{s^{(t)}}. \non
+\end{eqnarray}

@@ -1,0 +1,148 @@
+\section{$\!\!\!\!\!\!\!$. Data--driven Non-parametric Mixtures and Oracle Property}       % Section 3
+
+In \S\ref{zyf.four.sec:GeN}, we systematically construct the Ge-N$_d$ family by assuming mixture variable $\tau$ follows specific parametric distributions. However, in practical applications, the true underlying distribution of data generation process is typically unknown.  Pre-specifying a parametric form for $\tau$ may lead to model mis-specification, which can severely compromise the robustness of the statistical inference. To overcome this limitation, the following section introduces a data--driven approach. By employing non-parametric techniques to model the mixture variable, we propose a flexible and robust non-parametric mixture of multivariate normal distribution, which effectively eliminates the reliance on subjective parametric assumptions.
+
+\subsection{Definition of NPM-N$_d$ distribution}\label{zyf.four.sec:NPMN.definition}       % Section 3.1
+
+In this section, we do not specify the specific distribution of the mixture variable $\tau$ (i.e., no specific expression for $f_\tau(\tau|\bla)$), but adopt the right-endpoint histogram discretization method (see more details in Appendix \ref{zyf.four.sec:discretization}) to discretize \trv $\tau$ into
+\begin{eqnarray}    \label{zyf.four.3.1}
+    \Pr(\tau = \tau_j) = p_j, \quad j = 1, \dots, M \qor F_\tau(\tau|\ibp) = \sum_{j=1}^M p_j \cdot I(\tau \ge \tau_j),
+\end{eqnarray}
+where $\ibp = (p_1, \dots, p_M)^\top$ an unknown parameter vector of weights satisfying $\ibp \in \bbT_M$ with
+$$
+   \bbT_M \teq \left\{\ibp = (p_1, \dots, p_M)^{\T} \col 0 \le p_j \le 1, \; j = 1, \dots, M, \; \ibp^{\T}\1_M = 1 \right\},
+$$
+and $0 < \tau_1 < \cdots < \tau_M$ is a partition of interval $\bbR_+$. Then we provide the following definition.
+\begin{definition}{\rm \textbf{(Non-parametric mixture of multivariate normal distribution).} Suppose that the mixture variable $\tau$ with the \textit{cumulative distribution function} (cdf) $F_\tau(\tau | \ibp)$ in (\ref{zyf.four.3.1}), where $\ibp = (p_1, \dots, p_M)^\top \in \bbT_M$ is an unknown weight parameter vector. If a $d$-dimensional continuous vector $\ibX = (X_1, \dots, X_d)^\top$ has the SR (\ref{zyf.four.2.1}) with $\ibZ = (Z_1, \dots, Z_d)^\top \sim N_d(\0, \bSi)$ with $\ibZ \inde \tau$. Then we say $\ibX$ follows the \textit{non-parametric mixture of multivariate normal} (NPM-N$_d$) distribution, denoted by $\ibX \sim \NPMN$ or $\mbox{NPM-N}_d(\bphi)$, where $\bphi = \{\bmu, \bSi, \ibp\}$ is the parameter vector with $\bmu \in \bbR^d$ is the location parameter and $\bSi = (\sigma_{ij})_{d \times d}$ is the scale parameter matrix. \hfill $\|$
+}\end{definition}
+
+For $\ibX \sim \mbox{NPM-N}_d(\bphi)$ , we easily obtain the joint pdf as
+\begin{eqnarray}    \label{zyf.four.3.2}
+    \mbox{NPM-N}_d(\ibx | \bphi) = \frac{\1_M^\top \ibh_*(\ibx | \bphi)}{(2\pi)^{d/2} |\bSi|^{1/2}},
+\end{eqnarray}
+where $\ibh_*(\ibx | \bphi) = (h_{1*}(\ibx | \bphi), \dots, h_{M*}(\ibx | \bphi))^\top$ with
+\begin{eqnarray*}
+    h_{j*}(\ibx | \bphi) \teq p_j \tau_j^{d / 2} \exp\left\{-\frac{\tau_j}{2} (\ibx - \bmu)^\top \bSi^{-1} (\ibx - \bmu)\right\}, \quad j = 1, \dots, M.
+\end{eqnarray*}
+
+\subsection{Mean regression model for $\NPMN$ distribution}\label{zyf.four.sec:NPMN.reg}        % Section 3.2
+
+Assume that $\{\ibX_i\} \ind \mbox{NPM-N}_d(\bmu_i, \bSi, \ibp)$ and $\Y{obs} = \{\ibx_i, \ibzi\}_{i=1}^n$ denote the observed data, we consider the following mean regression model
+\begin{eqnarray}    \label{zyf.four.3.3}
+    E(\ibX_i) = \bmu_i = \bB^\top \ibzi, \quad i = 1, \dots, n,
+\end{eqnarray}
+where $\ibzi=(z_{i1}, \dots, z_{iq})^\top$ is a $q$-dimensional vector of covariates for the $i$-th subject, and the matrix of regression coefficients
+$$
+\bB = \left(
+\begin{array}{cccc}
+  \beta_{11} & \beta_{12} & \cdots & \beta_{1d} \\
+  \beta_{21} & \beta_{22} & \cdots & \beta_{2d} \\
+  \vdots     & \vdots     & \ddots & \vdots \\
+  \beta_{q1} & \beta_{q2} & \cdots & \beta_{qd}
+\end{array}
+\right),
+$$
+with $q \times d + d(d + 1) / 2 + M\leq n$. Let $\bvp = \{\bB, \bSi, \ibp\}$ be the parameter vector. Based on (\ref{zyf.four.3.2}) and (\ref{zyf.four.3.3}), the log-likelihood function of $\bvp$ is
+\begin{eqnarray}    \label{zyf.four.3.4}
+    \mcL(\bvp | \Y{obs}) = -\frac{nd}{2}\log(2\pi) - \frac{n}{2} \log|\bSi| + \sum_{i=1}^n \log \left[\1_M^\top \ibh(\ibx_i | \bvp) \right],
+\end{eqnarray}
+where $\ibh(\ibx_i | \bvp) = (h_1(\ibx_i | \bvp), \dots, h_M(\ibx_i | \bvp))^\top$ for $i = 1, \dots, n$ with
+\begin{eqnarray}    \label{zyf.four.3.5}
+    h_j(\ibx_i | \bvp) = p_j \tau_j^{d / 2} \exp\left\{-\frac{\tau_j}{2} (\ibx_i - \bmu_i)^\top \bSi^{-1} (\ibx_i - \bmu_i)\right\}, \quad j = 1, \dots, M.
+\end{eqnarray}
+The aim of this subsection is to calculate the MLEs of $\bvp$ through an MM algorithm. To this end, we first note the discrete version of Jensen's inequality
+$$
+    \xi\left(\sum_{j=1}^M b_j z_j \right) \ge \sum_{j=1}^M b_j \xi(z_j),
+$$
+for any concave function $\xi(\cdot)$, where $\ibb=(b_1, \dots, b_M)^\top \in \bbT_{M}$. For a fixed $i$, by setting $\xi(\cdot) = \log(\cdot)$, we then have the following inequality
+\begin{eqnarray}    \label{zyf.four.3.6}
+   \log (\1_M^\top \ibh(\ibx_i | \bvp)) \ge \constant + \sum_{j=1}^M \gt{ij} \log h_j(\ibx_i | \bvp),
+\end{eqnarray}
+where the weights
+\begin{eqnarray}    \label{zyf.four.3.7}
+    \gt{ij} \teq \frac{h_j(\ibx_i | \bvpt)}{\sum_{j=1}^M h_j(\ibx_i | \bvpt)} = \frac{h_j(\ibx_i | \bvpt)}{\1_M^\top \ibh(\ibx_i | \bvpt)},
+\end{eqnarray}
+where $\bvpt$ represents the $t$-th approximation of the MLE $\hbvp$. By combining (\ref{zyf.four.3.4}) with (\ref{zyf.four.3.6}), we can construct a surrogate function as
+$$
+    Q(\bvp | \bvpt) = \constant - \frac{n}{2} \log|\bSi| + \sum_{i=1}^n \sum_{j=1}^M \gt{ij} \left[\log p_j - \frac{\tau_j}{2} (\ibx_i - \bmu_i)^\top \bSi^{-1} (\ibx_i - \bmu_i)\right],
+$$
+By maximizing $Q(\bvp | \bvpt)$ with respect to $\bvp$, we obtain the MM iterations as
+\begin{eqnarray*}
+    \bBtI &=& \left[\sum_{i=1}^n \left(\sum_{j=1}^M \gt{ij}\tau_j\right) \ibzi \ibzi^\top \right]^{-1} \left[\sum_{i=1}^n \left(\sum_{j=1}^M \gt{ij}\tau_j\right) \ibzi \ibx_i^\top \right] \\ [2mm]
+    &=& (\bZ^\top \At{} \bZ)^{-1}(\bZ^\top \At{} \bX) \\ [2mm]
+    \bSitI &=& \frac{1}{n} \sum_{i=1}^n \left(\sum_{j=1}^M \gt{ij}\tau_j\right) \left(\ibx_i - \bB^{(t+1)\top}\ibzi \right)\left(\ibx_i - \bB^{(t+1)\top}\ibzi \right)^\top \\ [2mm]
+    &=& \frac{1}{n} \left(\bX - \bZ\bBtI\right)^\top \At{} \left(\bX - \bZ\bBtI \right) \\ [2mm]
+    \ptI{j} &=& \frac{\sum_{i=1}^n \gt{ij}}{\sum_{j=1}^M \sum_{i=1}^n \gt{ij}} = \frac{\1_n^\top \ibgt{j}}{\1_n^\top \bG^{(t)} \1_M}, \quad j = 1, \dots, M,
+\end{eqnarray*}
+where the covariate matrix $\bZ = (\ibz_{(1)}, \dots, \ibz_{(n)})^\top$, $\bX = (\ibx_1, \dots, \ibx_n)^\top$, for $i = 1, \dots, n$, and $j = 1, \dots, M$, we define
+\begin{eqnarray*}
+    && \at{i} \teq \sum_{j=1}^M \gt{ij}\tau_j, \quad \At{} \teq \diag\{\at{1}, \dots, \at{n}\}, \\ [2mm]
+    && \bG^{(t)} \teq (\gt{ij})_{n\times M} = (\ibgt{1}, \dots, \ibgt{M}) \qwi \ibgt{j} = \left(
+    \begin{array}{c}
+        \gt{1j}  \\
+        \vdots \\
+        \gt{nj}
+    \end{array} \right)
+\end{eqnarray*}
+being the $j$-column of $\bG^{(t)}$, here $\gt{ij}$ is given by (\ref{zyf.four.3.7}). The MM iterations are repeated until
+$$
+   \bigg|\frac{\mcL(\bvptI|\Y{obs}) - \mcL(\bvpt|\Y{obs})} {\mcL(\bvpt|\Y{obs})}\bigg| \le \de_0.
+$$
+where $\de_0$ is a pre-specified small positive number.
+
+\subsection{Adaptive hyper-parameter selection strategy}        % Section 3.3
+
+When constructing the NPM-N$_d$ model, the selection of hyper-parameters (number of discrete intervals $M$, locations of support points $\{\tau_m\}_{m=1}^M$ with their initial weights $\ibp^{(0)}$) directly determines the flexibility and generalization capability of model fitting. To achieve an optimal balance between eliminating parametric mis-specification and avoiding over-fitting, we propose an adaptive hyper-parameter selection strategy that combines Gauss--Laguerre quadrature with cross-validation.
+
+\subsubsection{Progressive screening mechanism for the number of discrete intervals}        % Section 3.3.1
+
+The parameter $M$ controls the accuracy of the discrete approximation: an excessively small $M$ leads to insufficient fitting capacity, while an overly large $M$ triggers severe overfitting, manifested by artificially high likelihood values on the training set but a sharp decline in generalization ability. To address this, we design a progressive screening mechanism comprising three steps:
+
+\begin{namelist}{01234567}
+\item[\hspace{0.08cm} \tsf{Step 1:}]  Referring to the method of sieves, we do not allow $M$ to grow infinitely. Instead, we restrict it to a candidate set $M \in \{M_1, ..., M_T\}$ that grows moderately with the sample size $n$ (e.g., $M_t = O(n^\al)$, where $\al \in (0,1)$);
+
+\item[\hspace{0.08cm} \tsf{Step 2:}]  We sequentially execute the MM algorithm over the candidate set and compute the relative likelihood gain brought by adjacent numbers of nodes, defined as 
+$$
+    \De(M_t) \teq \left|\frac{\mcL(M_{t+1}) - \mcL(M_t)}{\mcL(M_t)}\right|.
+$$
+When $M$ exceeds a certain threshold, the growth rate of the likelihood function significantly decelerates. Therefore, we select the smallest $M_t$ that satisfies $\Delta(M_t) < \ve$ (where $\ve$ is a pre-specified small positive tolerance), thereby eliminating redundant nodes with minimal marginal returns.
+
+\item[\hspace{0.08cm} \tsf{Step 3:}]  To completely circumvent over-fitting, we introduce cross-validation based on the preliminary screening. The sample is partitioned into a training set and a testing set, and the \textit{mean absolute error} (MAE) is calculated on the testing set. Ultimately, the value of $M$ that minimizes $\mbox{MAE}_\text{test}$ is selected as the optimal hyper-parameter: 
+$$
+    M_{opt} = \arg\min_M \mbox{MAE}_\text{test}(M_t).
+$$
+\end{namelist}
+
+\subsubsection{Heuristic determination of support points and initial weights}        % Section 3.3.2
+
+Based on the Riemann--Stieltjes approximation, it is first necessary to reasonably allocate grid points within the domain of integration. Noting that the log-likelihood function of the NPM-N$_d$ involves an integral form with an exponential decay factor $e^{-\tau}$, i.e., 
+\begin{eqnarray*}
+    \ell_\tau(\bga | \Y{obs}) &=& \sum_{i=1}^n \log \int_0^\infty \tau^{d / 2} f_\tau(\tau|\bla) \exp\left(-\frac{Q_i\tau}{2}\right) \rd \tau \\ [2mm]
+    &=& \sum_{i=1}^n \log \int_0^\infty \e^{-\tau} \tau^{d / 2} f_\tau(\tau|\bla) \exp\left[\left(1-\frac{Q_i}{2}\right)\tau\right] \rd \tau, 
+\end{eqnarray*}
+where quadratic form $Q_i = (\ibx_i - \bmu)^\top \bSi^{-1} (\ibx_i - \bmu)$, we introduce the Gauss--Laguerre quadrature (see Appendix \ref{zyf.four.sec:GLquadrature} for details) to determine the discrete grid.
+
+For a given number of intervals $M$, we directly extract the $M$ nodes of the Gauss--Laguerre polynomial, denoted as $\{\tau_m\}_{m=1}^M$, to serve as the fixed discrete support points for the mixture variable $\tau$, and utilize their corresponding quadrature weights $\{p_m\}_{m=1}^M$ as the initial values $\ibp^{(0)}$ for the discrete probabilities. This selection strategy has the advantages of covering the core area of the integral and improving the computational stability.
+
+\subsection{Likelihood approximation via Riemann--Stieltjes integral}\label{zyf.four.sec:Likelihoodapproximation}     % Section 3.4
+
+Suppose that $\{\ibX_i\}_{i=1}^n \iid \GeN$ with a specific mixture variable $\tau$ and mixture density $f_\tau(\tau|\bla)$ satisfying there exists a constant $S$ large enough such that the probability $\Pr(\tau \in [0, S] > 1 - \ve)$ holds for any $\ve > 0$. Denote $\Y{obs} = \{\ibx_i\}_{i=1}^n$ be the observed data, we easily obtain the log-likelihood function of $\bga = \{\bmu, \bSi, \bla\}$ as
+\begin{eqnarray} \label{zyf.four.3.8}
+    \ell(\bga | \Y{obs}) \sr{(\ref{zyf.four.2.10})} -\frac{nd}{2}\log(2\pi) - \frac{n}{2}\log|\bSi| + \ell_\tau(\bga | \Y{obs}),
+\end{eqnarray}
+where
+\begin{eqnarray*}
+    \ell_\tau(\bga | \Y{obs}) = \sum_{i=1}^n \log \int_0^\infty \tau^{d / 2} f_\tau(\tau|\bla) \exp\left[-\frac{\tau}{2} \left(\ibx_i - \bB^\top\ibzi \right)^\top \bSi^{-1} \left(\ibx_i - \bB^\top\ibzi \right)\right] \rd \tau.
+\end{eqnarray*}
+We further assume that there exists a partition on the interval $[0, S]$, denoted by $M$ disjoint sub-intervals as $\bbS_j = (\tau_{j - 1}, \tau_j]$ with $0 = \tau_0 < \tau_1 < \cdots < \tau_M = S$, the partition mesh size satisfies $\|\Pi\| = \max_{1 \le j \le M} (\tau_j - \tau_{j - 1}) \to 0$ as $M \to \infty$. Then by employing the Riemann--Stieltjes approximation (\ref{zyf.four.A.3}), we approximate $\ell_\tau(\bga | \Y{obs})$ as
+\begin{eqnarray*}
+    \ell_\tau(\bga | \Y{obs}) &\ap& \sum_{i=1}^n \log \sum_{j=1}^M \int_{\bbS_j} \tau^{d / 2} f_\tau(\tau|\bla) \exp\left[-\frac{\tau}{2} \left(\ibx_i - \bB^\top\ibzi \right)^\top \bSi^{-1} \left(\ibx_i - \bB^\top\ibzi \right)\right] \rd \tau \\ [2mm]
+    &\ap& \sum_{i=1}^n \log \sum_{j=1}^M p_j \tau_j^{d / 2} \exp\left[-\frac{\tau_j}{2} \left(\ibx_i - \bB^\top\ibzi \right)^\top \bSi^{-1} \left(\ibx_i - \bB^\top\ibzi \right)\right],
+\end{eqnarray*}
+where $p_j = \int_{\bbS_j} f(\tau|\bla) \rd \tau$. Review the definition of $h_j(\ibx | \bvp)$ in (\ref{zyf.four.3.5}), we found that the log-likelihood function of $\bga$ can be approximated as
+\begin{eqnarray*}
+    \ell(\bga | \Y{obs}) &=& -\frac{nd}{2}\log(2\pi) - \frac{n}{2}\log|\bSi| + \ell_\tau(\bga | \Y{obs}) \\ [2mm]
+    &\ap& -\frac{nd}{2}\log(2\pi) - \frac{n}{2}\log|\bSi| + \sum_{i=1}^n \log \left[\1_M^\top \ibh(\ibx_i | \bvp) \right] \\ [2mm]
+    &\sr{(\ref{zyf.four.3.4})}& \mcL(\bvp | \Y{obs}),
+\end{eqnarray*}
+which is actually the log-likelihood function of NPM-N$_d$ in \S\ref{zyf.four.sec:NPMN.reg}. Therefore, the proposed NPM-N$_d$ distribution is equivalent to the likelihood approximation of the original parameterized Ge-N$_d$ distribution via Riemann--Stieltjes integral.
