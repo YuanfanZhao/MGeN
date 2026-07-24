@@ -202,12 +202,15 @@ Simulation <- function(number, size, Mu, Sigma, nv, Ratio) {
 
 # 设定参数
 num_cores <- detectCores()
-all_times <- num_cores * 1
+all_times <- num_cores * 11
 size <- 500
 Mu <- c(-1, 2)
 Sigma <- matrix(c(1, 0.5, 0.5, 2), nrow = 2)
 nv <- 12
-Ratio <- c(1 / 6, 2 / 3, 1 / 6)
+# Ratio <- c(1 / 3, 1 / 3, 1 / 3)
+Ratio <- c(5 / 6, 1 / 12, 1 / 12)
+# Ratio <- c(1 / 6, 2 / 3, 1 / 6)
+# Ratio <- c(1 / 6, 1 / 6, 2 / 3)
 
 # ==============================================================================================================================
 
@@ -239,7 +242,7 @@ result <- data.frame(KL = colMeans(KL.value),
                      Rank1 = apply(Rank.value, c(1, 2), mean)[1, ], 
                      Rank2 = apply(Rank.value, c(1, 2), mean)[2, ])
 
-write.csv(result, "Laplace.csv")
+write.csv(result, "t.csv")
 
 # 结束运算，输出时间
 end_time <- Sys.time()
